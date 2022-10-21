@@ -3,6 +3,12 @@ import mongoose from 'mongoose'
 const loadModels = () => {
   require('./User')
   require('./Summary')
+  require('./Education')
+  require('./Experience')
+  require('./PersonalDetail')
+  require('./Certificate')
+  require('./Language')
+  require('./Skill')
 }
 
 export const ConnectDB = async () => {
