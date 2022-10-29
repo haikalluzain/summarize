@@ -3,7 +3,6 @@ import Card from 'components/bootstrap/Card'
 import AuthContext from 'contexts/authContext'
 import Page from 'layout/Page/Page'
 import PageWrapper from 'layout/PageWrapper/PageWrapper'
-import moment from 'moment'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useCallback, useContext, useEffect } from 'react'
@@ -11,8 +10,6 @@ import {
   buildStyles,
   CircularProgressbarWithChildren,
 } from 'react-circular-progressbar'
-
-const percentage = 66
 
 const dummy = [
   {
@@ -66,7 +63,7 @@ const Main: NextPage = () => {
           </div>
           <div className="row mt-5">
             {dummy.map((cv) => (
-              <div className="col-lg-4">
+              <div className="col-lg-4" key={cv.id}>
                 <div className="row">
                   <div className="col-6 px-4">
                     <Card
@@ -91,9 +88,7 @@ const Main: NextPage = () => {
                         </CircularProgressbarWithChildren>
                       </div>
                       <p className="fs-5 fw-bold mb-1">{cv.name}</p>
-                      <p className="text-muted">
-                        {moment().format('DD MMM YYYY HH:mm:ss')}
-                      </p>
+                      <p className="text-muted">30 Oct 2022 10:10:10</p>
                       <div className="row g-3">
                         <div className="col-12">
                           <Button
