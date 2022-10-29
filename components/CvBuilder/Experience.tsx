@@ -193,33 +193,33 @@ const Experience: React.FC<{}> = () => {
                     <Label className="fw-bold">End</Label>
                     <div className="row">
                       <div className="col-md-6">
-                        <FormGroup id="startMonth" label="Month" isFloating>
+                        <FormGroup id="endMonth" label="Month" isFloating>
                           <Select
-                            ariaLabel="startMonth"
+                            ariaLabel="endMonth"
                             placeholder="Month"
                             list={months}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            value={formik.values.startMonth}
+                            value={formik.values.endMonth}
                             isValid={formik.isValid}
-                            isTouched={formik.touched.startMonth}
-                            invalidFeedback={formik.errors.startMonth}
+                            isTouched={formik.touched.endMonth}
+                            invalidFeedback={formik.errors.endMonth}
                             validFeedback="Looks good!"
                           />
                         </FormGroup>
                       </div>
                       <div className="col-md-6">
-                        <FormGroup id="startYear" label="Year" isFloating>
+                        <FormGroup id="endYear" label="Year" isFloating>
                           <Select
-                            ariaLabel="startYear"
+                            ariaLabel="endYear"
                             placeholder="Year"
                             list={years}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            value={formik.values.startYear}
+                            value={formik.values.endYear}
                             isValid={formik.isValid}
-                            isTouched={formik.touched.startYear}
-                            invalidFeedback={formik.errors.startYear}
+                            isTouched={formik.touched.endYear}
+                            invalidFeedback={formik.errors.endYear}
                             validFeedback="Looks good!"
                           />
                         </FormGroup>
