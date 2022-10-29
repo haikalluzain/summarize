@@ -1,24 +1,27 @@
-import Button from 'components/bootstrap/Button'
+import type { NextPage } from 'next'
+import PageWrapper from 'layout/PageWrapper/PageWrapper'
+import Page from 'layout/Page/Page'
 import Card, { CardBody } from 'components/bootstrap/Card'
+import { useCallback, useContext, useEffect } from 'react'
+import useDarkMode from 'hooks/useDarkMode'
+import AuthContext from 'contexts/authContext'
+import { useRouter } from 'next/router'
+import { useFormik } from 'formik'
 import FormGroup from 'components/bootstrap/forms/FormGroup'
 import Input from 'components/bootstrap/forms/Input'
-import AuthContext from 'contexts/authContext'
-import { useFormik } from 'formik'
-import useDarkMode from 'hooks/useDarkMode'
-import Page from 'layout/Page/Page'
-import PageWrapper from 'layout/PageWrapper/PageWrapper'
-import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import { useCallback, useContext, useEffect } from 'react'
+import Button from 'components/bootstrap/Button'
 import * as Yup from 'yup'
 
-type LoginPayloadType = {
+type RegisterPayloadType = {
+  firstname: string
   email: string
   password: string
+  passwordConfirmation?: string
 }
 
-const Login: NextPage = () => {
-  const initialPayload: LoginPayloadType = {
+const Register: NextPage = () => {
+  const initialPayload: RegisterPayloadType = {
+    firstname: '',
     email: '',
     password: '',
   }
@@ -34,7 +37,17 @@ const Login: NextPage = () => {
     }
   }, [user, router])
 
-  // const handleLogin = async (payload: LoginPayloadType) => {
+  const RegisterSchema = Yup.object().shape({
+    firstname: Yup.string().min(3).max(50).required(),
+    email: Yup.string().email().required(),
+    password: Yup.string().min(8).required(),
+    passwordConfirmation: Yup.string().oneOf(
+      [Yup.ref('password'), null],
+      'Passwords doesn`t match'
+    ),
+  })
+
+  // const handleLogin = async (payload: RegisterPayloadType) => {
   //   try {
   //     const { data } = await Api('CONFIGURATION').post('auth/signin', {
   //       ...payload,
@@ -49,28 +62,23 @@ const Login: NextPage = () => {
   //     handleNavigate()
   //   } catch (error: any) {
   //     if (error?.message) {
-  //       formik.setFieldError('email', error.message)
+  //       formik.setFieldError('username', error.message)
   //     }
   //   }
   // }
 
-  const goToRegisterPage = () => {
-    router.push('/register')
+  const goToLoginPage = () => {
+    router.push('/')
   }
-
-  const LoginSchema = Yup.object().shape({
-    email: Yup.string().email().required(),
-    password: Yup.string().min(8).required(),
-  })
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: initialPayload,
-    validationSchema: LoginSchema,
+    validationSchema: RegisterSchema,
     validateOnChange: false,
     onSubmit: (values) => {
       // handleLogin(values)
-      router.push('/main')
+      console.log('Register')
     },
   })
   return (
@@ -78,29 +86,27 @@ const Login: NextPage = () => {
       <Page className="p-0">
         <div className="row h-100 align-items-center justify-content-center">
           <div className="col-xl-4 col-lg-6 col-md-8 shadow-3d-container">
-            <Card className="shadow-3d-dark" data-tour="login-page">
+            <Card>
               <CardBody>
-                <div className="my-5 text-center">
-                  {/* <Link
-                    href="/"
-                    className={classNames(
-                      'text-decoration-none  fw-bold display-2',
-                      {
-                        'text-dark': !darkModeStatus,
-                        'text-light': darkModeStatus,
-                      }
-                    )}
-                  >
-                    <div>Logo</div>
-                    <img src={Logo} width="200" />
-                  </Link> */}
-                  <div className="mt-5 text-center h1 fw-bold">Welcome,</div>
-                  <div className="mb-5 text-center h4 text-muted">
-                    Sign in to continue!
-                  </div>
-                </div>
                 <form className="row g-4">
                   <>
+                    <div className="col-12">
+                      <FormGroup id="firstname" isFloating label="First Name">
+                        <Input
+                          autoComplete="firstname"
+                          value={formik.values.firstname}
+                          isTouched={formik.touched.firstname}
+                          invalidFeedback={formik.errors.firstname}
+                          isValid={formik.isValid}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          onFocus={() => {
+                            formik.setErrors({})
+                          }}
+                          required
+                        />
+                      </FormGroup>
+                    </div>
                     <div className="col-12">
                       <FormGroup id="email" isFloating label="Email">
                         <Input
@@ -135,6 +141,26 @@ const Login: NextPage = () => {
                         />
                       </FormGroup>
                     </div>
+                    <div className="col-12">
+                      <FormGroup
+                        id="passwordConfirmation"
+                        isFloating
+                        label="Password Confirmation"
+                      >
+                        <Input
+                          type="password"
+                          placeholder="passwordConfirmation"
+                          autoComplete="passwordConfirmation"
+                          value={formik.values.passwordConfirmation}
+                          isTouched={formik.touched.passwordConfirmation}
+                          invalidFeedback={formik.errors.passwordConfirmation}
+                          isValid={formik.isValid}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          required
+                        />
+                      </FormGroup>
+                    </div>
                     {/* <div className="mt-2 col-12 text-end">
                       <Link
                         className="text-decoration-none fw-bold text-success"
@@ -149,7 +175,7 @@ const Login: NextPage = () => {
                         className="py-3 w-100"
                         onClick={formik.handleSubmit}
                       >
-                        Login
+                        Create Account
                       </Button>
                     </div>
                   </>
@@ -159,12 +185,12 @@ const Login: NextPage = () => {
             <div className="row">
               <div className="col-12 text-center">
                 <p>
-                  New to Summirize?{' '}
+                  Already a member?{' '}
                   <span
                     className="text-primary cursor-pointer"
-                    onClick={goToRegisterPage}
+                    onClick={goToLoginPage}
                   >
-                    Create your account
+                    Login
                   </span>
                 </p>
               </div>
@@ -176,4 +202,4 @@ const Login: NextPage = () => {
   )
 }
 
-export default Login
+export default Register
