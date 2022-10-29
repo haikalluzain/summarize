@@ -121,7 +121,7 @@ const PersonalDetail: React.FC<{}> = () => {
                 </FormGroup>
               </div>
               <div className="col-12">
-                <FormGroup id="email" label="Email address" isFloating>
+                <FormGroup id="email" label="Email Address" isFloating>
                   <Input
                     type="email"
                     placeholder="Email address"
@@ -137,7 +137,7 @@ const PersonalDetail: React.FC<{}> = () => {
                 </FormGroup>
               </div>
               <div className="col-12">
-                <FormGroup id="phoneNumber" label="Email address" isFloating>
+                <FormGroup id="phoneNumber" label="Phone Number" isFloating>
                   <Input
                     type="number"
                     placeholder="Phone Number"
@@ -153,7 +153,7 @@ const PersonalDetail: React.FC<{}> = () => {
                 </FormGroup>
               </div>
               <div className="col-12">
-                <FormGroup id="website" label="Email address" isFloating>
+                <FormGroup id="website" label="Personal Website" isFloating>
                   <Input
                     type="url"
                     placeholder="Personal Website"

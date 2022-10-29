@@ -13,7 +13,6 @@ import FormGroup from 'components/bootstrap/forms/FormGroup'
 import Input from 'components/bootstrap/forms/Input'
 import Label from 'components/bootstrap/forms/Label'
 import Select from 'components/bootstrap/forms/Select'
-import Textarea from 'components/bootstrap/forms/Textarea'
 import { useFormik } from 'formik'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
@@ -75,7 +74,7 @@ const months: SelectType[] = [
   },
 ]
 
-const Experience: React.FC<{}> = () => {
+const Certificate: React.FC<{}> = () => {
   const [years, setYears] = useState<SelectType[]>([])
 
   useEffect(() => {
@@ -89,23 +88,23 @@ const Experience: React.FC<{}> = () => {
     setYears(yearList)
   }, [])
 
-  const ExperienceSchema = Yup.object().shape({
-    jobTitle: Yup.string().required(),
-    company: Yup.string().required(),
+  const CertificateSchema = Yup.object().shape({
+    certificateName: Yup.string().required(),
+    organization: Yup.string().required(),
     startMonth: Yup.string().required(),
     startYear: Yup.string().required(),
   })
 
   const formik = useFormik({
     initialValues: {
-      jobTitle: '',
-      company: '',
+      certificateName: '',
+      organization: '',
       startMonth: '',
       startYear: '',
       endMonth: '',
       endYear: '',
     },
-    validationSchema: ExperienceSchema,
+    validationSchema: CertificateSchema,
     onSubmit: () => {},
   })
 
@@ -115,37 +114,45 @@ const Experience: React.FC<{}> = () => {
         <Card tag="form" noValidate onSubmit={formik.handleSubmit}>
           <CardHeader>
             <CardLabel icon="Work" iconColor="primary">
-              <CardTitle>Experience</CardTitle>
+              <CardTitle>Certificate</CardTitle>
             </CardLabel>
           </CardHeader>
           <CardBody className="pb-0">
             <div className="row g-4">
               <div className="col-12">
-                <FormGroup id="jobTitle" label="Job Title" isFloating>
+                <FormGroup
+                  id="certificateName"
+                  label="Certificate Name"
+                  isFloating
+                >
                   <Input
-                    placeholder="Job Title"
-                    autoComplete="username"
+                    placeholder="Certificate Name"
+                    autoComplete="certificateName"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.jobTitle}
+                    value={formik.values.certificateName}
                     isValid={formik.isValid}
-                    isTouched={formik.touched.jobTitle}
-                    invalidFeedback={formik.errors.jobTitle}
+                    isTouched={formik.touched.certificateName}
+                    invalidFeedback={formik.errors.certificateName}
                     validFeedback="Looks good!"
                   />
                 </FormGroup>
               </div>
               <div className="col-12">
-                <FormGroup id="company" label="Company Name " isFloating>
+                <FormGroup
+                  id="organization"
+                  label="Organization Name "
+                  isFloating
+                >
                   <Input
-                    placeholder="Company Name "
-                    autoComplete="company"
+                    placeholder="Organization Name "
+                    autoComplete="organization"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.company}
+                    value={formik.values.organization}
                     isValid={formik.isValid}
-                    isTouched={formik.touched.company}
-                    invalidFeedback={formik.errors.company}
+                    isTouched={formik.touched.organization}
+                    invalidFeedback={formik.errors.organization}
                     validFeedback="Looks good!"
                   />
                 </FormGroup>
@@ -227,8 +234,8 @@ const Experience: React.FC<{}> = () => {
                       <div className="col-12 mt-3">
                         <Checks
                           type="checkbox"
-                          id="currentlyWorkHere"
-                          label="Currently work here"
+                          id="doesNotExpire"
+                          label="Does not Expire"
                           // onChange={exampleInline.handleChange}
                           // checked={exampleInline.values.exampleInlineOne}
                           isInline
@@ -237,11 +244,6 @@ const Experience: React.FC<{}> = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="col-12">
-                <FormGroup className="col" id="exampleSizeTextareaLg">
-                  <Textarea placeholder="Accomplishment" />
-                </FormGroup>
               </div>
             </div>
           </CardBody>
@@ -274,4 +276,4 @@ const Experience: React.FC<{}> = () => {
   )
 }
 
-export default Experience
+export default Certificate

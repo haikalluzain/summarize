@@ -6,8 +6,13 @@ import Card, {
   CardSubTitle,
   CardTitle,
 } from 'components/bootstrap/Card'
+import Education from 'components/CvBuilder/Education'
 import Experience from 'components/CvBuilder/Experience'
+import Language from 'components/CvBuilder/Language'
 import PersonalDetail from 'components/CvBuilder/PersonalDetail'
+import Certificate from 'components/CvBuilder/Certificate'
+import Skill from 'components/CvBuilder/Skill'
+import Summary from 'components/CvBuilder/Summary'
 import Page from 'layout/Page/Page'
 import PageWrapper from 'layout/PageWrapper/PageWrapper'
 import { NextPage } from 'next'
@@ -148,6 +153,11 @@ const CvEditPage: NextPage = () => {
               <div className="col-xl-6 col-lg-9 col-md-12">
                 {TABS.PERSONAL_DETAIL === activeTab && <PersonalDetail />}
                 {TABS.EXPERIENCE === activeTab && <Experience />}
+                {TABS.EDUCATION === activeTab && <Education />}
+                {TABS.SKILL === activeTab && <Skill />}
+                {TABS.LANGUAGE === activeTab && <Language />}
+                {TABS.SUMMARY === activeTab && <Summary />}
+                {TABS.CERTIFICATE === activeTab && <Certificate />}
               </div>
             </div>
           </div>
