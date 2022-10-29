@@ -1,9 +1,0 @@
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
-@import 'stisla-theme/dist/css/style.css';
-
-/* optional imports */
-@import 'stisla-theme/dist/css/components.css';
-@import 'stisla-theme/dist/css/rtl.css';
-@import 'stisla-theme/dist/css/skins/reverse.css';
