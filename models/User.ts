@@ -1,6 +1,6 @@
-import mongoose, { Document, Model, model, Schema } from 'mongoose'
-import { IUser } from '../types/IUser'
+import { Document, Model, model, Schema } from 'mongoose'
 import { v4 } from 'uuid'
+import { IUser } from '../types/IUser'
 import { compareHash } from '../utils/password'
 
 export const UserSchema = new Schema(
@@ -22,7 +22,7 @@ export const UserSchema = new Schema(
     },
     username: {
       type: String,
-      required: true,
+      required: false,
     },
     password: {
       type: String,

@@ -21,6 +21,7 @@ import { useRouter } from 'next/router'
 import PropTypes from 'prop-types'
 import { FC, ReactNode, useContext, useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Api } from 'utils/api'
 
 interface ICommonHeaderRightProps {
   beforeChildren?: ReactNode
@@ -56,8 +57,13 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({
     )
   }
 
-  const handleLogout = () => {
-    push('/')
+  const handleLogout = async () => {
+    try {
+      await Api().delete('auth/logout')
+      push('/')
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   /**

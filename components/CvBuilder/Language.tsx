@@ -64,11 +64,11 @@ const Language: React.FC<{}> = () => {
       <div className="col-12">
         <Card tag="form" noValidate onSubmit={formik.handleSubmit}>
           <CardHeader>
-            <CardLabel icon="Work" iconColor="primary">
+            <CardLabel icon="GTranslate" iconColor="primary">
               <CardTitle>Language</CardTitle>
             </CardLabel>
           </CardHeader>
-          <CardBody className="pb-0">
+          <CardBody>
             <div className="row">
               <Label>Before filling</Label>
               <div className="col-12">

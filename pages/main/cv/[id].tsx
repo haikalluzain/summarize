@@ -6,11 +6,11 @@ import Card, {
   CardSubTitle,
   CardTitle,
 } from 'components/bootstrap/Card'
+import Certificate from 'components/CvBuilder/Certificate'
 import Education from 'components/CvBuilder/Education'
 import Experience from 'components/CvBuilder/Experience'
 import Language from 'components/CvBuilder/Language'
 import PersonalDetail from 'components/CvBuilder/PersonalDetail'
-import Certificate from 'components/CvBuilder/Certificate'
 import Skill from 'components/CvBuilder/Skill'
 import Summary from 'components/CvBuilder/Summary'
 import Page from 'layout/Page/Page'
@@ -23,8 +23,8 @@ type TTabs =
   | 'Experience'
   | 'Education'
   | 'Skills'
-  | 'Language'
   | 'Certificates'
+  | 'Language'
   | 'Summary'
 interface ITabs {
   [key: string]: TTabs
@@ -35,8 +35,8 @@ const CvEditPage: NextPage = () => {
     EXPERIENCE: 'Experience',
     EDUCATION: 'Education',
     SKILL: 'Skills',
-    LANGUAGE: 'Language',
     CERTIFICATE: 'Certificates',
+    LANGUAGE: 'Language',
     SUMMARY: 'Summary',
   }
   const [activeTab, setActiveTab] = useState<TTabs>(TABS.PERSONAL_DETAIL)
@@ -101,17 +101,6 @@ const CvEditPage: NextPage = () => {
                   </div>
                   <div className="col-12">
                     <Button
-                      icon="GTranslate"
-                      color="primary"
-                      className="w-100 p-3"
-                      isLight={TABS.LANGUAGE !== activeTab}
-                      onClick={() => setActiveTab(TABS.LANGUAGE)}
-                    >
-                      {TABS.LANGUAGE}
-                    </Button>
-                  </div>
-                  <div className="col-12">
-                    <Button
                       icon="MilitaryTech"
                       color="primary"
                       className="w-100 p-3"
@@ -119,6 +108,17 @@ const CvEditPage: NextPage = () => {
                       onClick={() => setActiveTab(TABS.CERTIFICATE)}
                     >
                       {TABS.CERTIFICATE}
+                    </Button>
+                  </div>
+                  <div className="col-12">
+                    <Button
+                      icon="GTranslate"
+                      color="primary"
+                      className="w-100 p-3"
+                      isLight={TABS.LANGUAGE !== activeTab}
+                      onClick={() => setActiveTab(TABS.LANGUAGE)}
+                    >
+                      {TABS.LANGUAGE}
                     </Button>
                   </div>
                   <div className="col-12">

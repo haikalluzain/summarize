@@ -1,30 +1,34 @@
-import type { NextPage } from 'next'
-import PageWrapper from 'layout/PageWrapper/PageWrapper'
-import Page from 'layout/Page/Page'
+import Button from 'components/bootstrap/Button'
 import Card, { CardBody } from 'components/bootstrap/Card'
-import { useCallback, useContext, useEffect } from 'react'
-import useDarkMode from 'hooks/useDarkMode'
-import AuthContext from 'contexts/authContext'
-import { useRouter } from 'next/router'
-import { useFormik } from 'formik'
 import FormGroup from 'components/bootstrap/forms/FormGroup'
 import Input from 'components/bootstrap/forms/Input'
-import Button from 'components/bootstrap/Button'
+import AuthContext from 'contexts/authContext'
+import { useFormik } from 'formik'
+import useDarkMode from 'hooks/useDarkMode'
+import Page from 'layout/Page/Page'
+import PageWrapper from 'layout/PageWrapper/PageWrapper'
+import type { GetServerSideProps, NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useCallback, useContext, useEffect } from 'react'
+import { IUser } from 'types/IUser'
+import { Api } from 'utils/api'
+import nextMiddleware from 'utils/nextMiddleware'
 import * as Yup from 'yup'
 
 type RegisterPayloadType = {
-  firstname: string
+  name: string
   email: string
   password: string
   passwordConfirmation?: string
 }
 
+const initialPayload: RegisterPayloadType & IUser = {
+  name: '',
+  email: '',
+  password: '',
+}
+
 const Register: NextPage = () => {
-  const initialPayload: RegisterPayloadType = {
-    firstname: '',
-    email: '',
-    password: '',
-  }
   const router = useRouter()
   const { user, setUser } = useContext(AuthContext)
   const { darkModeStatus } = useDarkMode()
@@ -38,7 +42,7 @@ const Register: NextPage = () => {
   }, [user, router])
 
   const RegisterSchema = Yup.object().shape({
-    firstname: Yup.string().min(3).max(50).required(),
+    name: Yup.string().min(3).max(50).required(),
     email: Yup.string().email().required(),
     password: Yup.string().min(8).required(),
     passwordConfirmation: Yup.string().oneOf(
@@ -47,25 +51,20 @@ const Register: NextPage = () => {
     ),
   })
 
-  // const handleLogin = async (payload: RegisterPayloadType) => {
-  //   try {
-  //     const { data } = await Api('CONFIGURATION').post('auth/signin', {
-  //       ...payload,
-  //     })
-  //     const userData: IAuth = {
-  //       ...data.data,
-  //       token: data.auth_token,
-  //     }
-  //     if (setUser) {
-  //       setUser(userData)
-  //     }
-  //     handleNavigate()
-  //   } catch (error: any) {
-  //     if (error?.message) {
-  //       formik.setFieldError('username', error.message)
-  //     }
-  //   }
-  // }
+  const handleRegister = async (payload: RegisterPayloadType) => {
+    try {
+      const { data } = await Api().post('auth/register', payload)
+      handleNavigate()
+    } catch (error: any) {
+      if (error?.message) {
+        if (error?.field) {
+          formik.setFieldError(error.field, error.message)
+        } else {
+          formik.setFieldError('email', error.message)
+        }
+      }
+    }
+  }
 
   const goToLoginPage = () => {
     router.push('/')
@@ -77,8 +76,7 @@ const Register: NextPage = () => {
     validationSchema: RegisterSchema,
     validateOnChange: false,
     onSubmit: (values) => {
-      // handleLogin(values)
-      console.log('Register')
+      handleRegister(values)
     },
   })
   return (
@@ -88,15 +86,23 @@ const Register: NextPage = () => {
           <div className="col-xl-4 col-lg-6 col-md-8 shadow-3d-container">
             <Card>
               <CardBody>
+                <div className="my-5 text-center">
+                  <div className="mt-5 text-center h2 fw-bold">
+                    Create your account
+                  </div>
+                  <div className="mb-5 text-center h5 text-muted">
+                    Please fulfill the form below
+                  </div>
+                </div>
                 <form className="row g-4">
                   <>
                     <div className="col-12">
-                      <FormGroup id="firstname" isFloating label="First Name">
+                      <FormGroup id="name" isFloating label="First Name">
                         <Input
-                          autoComplete="firstname"
-                          value={formik.values.firstname}
-                          isTouched={formik.touched.firstname}
-                          invalidFeedback={formik.errors.firstname}
+                          autoComplete="name"
+                          value={formik.values.name}
+                          isTouched={formik.touched.name}
+                          invalidFeedback={formik.errors.name}
                           isValid={formik.isValid}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
@@ -200,6 +206,15 @@ const Register: NextPage = () => {
       </Page>
     </PageWrapper>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  try {
+    const { user } = await nextMiddleware(req, res)
+    return { props: { user: user, isLogin: !!user } }
+  } catch (e) {
+    return { props: { user: null, isLogin: null } }
+  }
 }
 
 export default Register

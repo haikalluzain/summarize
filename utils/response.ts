@@ -1,5 +1,5 @@
-import {NextApiResponse} from 'next'
-import {ReasonPhrases, StatusCodes} from 'http-status-codes'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
+import { NextApiResponse } from 'next'
 
 /**
  * Success response
@@ -8,11 +8,16 @@ import {ReasonPhrases, StatusCodes} from 'http-status-codes'
  * @param data
  * @param statusCode
  */
-export const successResponse = (res: NextApiResponse, message: string, data: any = null, statusCode: number = StatusCodes.OK) => {
+export const successResponse = (
+  res: NextApiResponse,
+  message: string,
+  data: any = null,
+  statusCode: number = StatusCodes.OK
+) => {
   let response = {
     statusCode,
     message,
-    data
+    data,
   }
   if (!data) delete response['data']
 
@@ -25,10 +30,16 @@ export const successResponse = (res: NextApiResponse, message: string, data: any
  * @param statusCode
  * @param message
  */
-export const errorResponse = (res: NextApiResponse, statusCode: number, message: string) => {
+export const errorResponse = (
+  res: NextApiResponse,
+  statusCode: number,
+  message: string,
+  field?: string
+) => {
   return res.status(statusCode).json({
     statusCode,
-    message
+    message,
+    field,
   })
 }
 
@@ -40,14 +51,19 @@ export const responseNotFound = (
 }
 
 export const responseUnauthorized = (res: NextApiResponse) => {
-  return errorResponse(res, StatusCodes.UNAUTHORIZED, ReasonPhrases.UNAUTHORIZED)
+  return errorResponse(
+    res,
+    StatusCodes.UNAUTHORIZED,
+    ReasonPhrases.UNAUTHORIZED
+  )
 }
 
 export const responseUnprocessable = (
   res: NextApiResponse,
-  message: string = ReasonPhrases.UNPROCESSABLE_ENTITY
+  message: string = ReasonPhrases.UNPROCESSABLE_ENTITY,
+  field?: string
 ) => {
-  return errorResponse(res, StatusCodes.UNPROCESSABLE_ENTITY, message)
+  return errorResponse(res, StatusCodes.UNPROCESSABLE_ENTITY, message, field)
 }
 
 export const responseBadRequest = (
@@ -65,5 +81,9 @@ export const responseInternalServerError = (
 }
 
 export const responseMethodNotAllowed = (res: NextApiResponse) => {
-  return errorResponse(res, StatusCodes.METHOD_NOT_ALLOWED, ReasonPhrases.METHOD_NOT_ALLOWED)
+  return errorResponse(
+    res,
+    StatusCodes.METHOD_NOT_ALLOWED,
+    ReasonPhrases.METHOD_NOT_ALLOWED
+  )
 }

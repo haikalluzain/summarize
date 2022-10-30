@@ -118,7 +118,7 @@ const Experience: React.FC<{}> = () => {
               <CardTitle>Experience</CardTitle>
             </CardLabel>
           </CardHeader>
-          <CardBody className="pb-0">
+          <CardBody>
             <div className="row g-4">
               <div className="col-12">
                 <FormGroup id="jobTitle" label="Job Title" isFloating>

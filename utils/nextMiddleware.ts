@@ -1,12 +1,13 @@
-import nextConnect from 'next-connect'
-import { ConnectDB } from 'models'
-import { NextApiRequest, NextApiResponse } from 'next'
-import { ironSession, Session } from 'next-iron-session'
-import { UserModel } from 'models/User'
-import { responseUnauthorized } from './response'
+import { IncomingMessage, ServerResponse } from 'http'
 import jwt from 'jsonwebtoken'
+import { ConnectDB } from 'models'
+import { UserModel } from 'models/User'
 import moment from 'moment-timezone'
+import { NextApiRequest, NextApiResponse } from 'next'
+import nextConnect from 'next-connect'
+import { ironSession, Session } from 'next-iron-session'
 import { IUser } from 'types/IUser'
+import { responseUnauthorized } from './response'
 
 export interface NextApiRequestWithSession extends NextApiRequest {
   user: IUser
@@ -73,7 +74,7 @@ const authMiddleware = async (
     if (req.session.get('user')) {
       const user = await UserModel.findOne({ _id: req.session.get('user') })
       if (user !== null) {
-        req.user = user
+        req.user = JSON.parse(JSON.stringify(user.toJSON()))
       }
     } else if (token) {
       const decode: any = jwt.verify(
@@ -87,12 +88,25 @@ const authMiddleware = async (
   }
 
   /**
+   * Redirect if logedin
+   */
+  if (new RegExp('^/(register)', 'i').test(req.url)) {
+    if (req.user !== null) {
+      res.writeHead(302, {
+        Location: '/main',
+      })
+      res.end()
+      return { props: {} }
+    }
+  }
+
+  /**
    * Redirect if not logedin
    */
   if (new RegExp('^/(main)', 'i').test(req.url)) {
     if (req.user === null) {
       res.writeHead(302, {
-        Location: '/auth/login',
+        Location: '/',
       })
       res.end()
       return { props: {} }
@@ -116,8 +130,8 @@ const authMiddleware = async (
 }
 
 const nextMiddleware = async (
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: NextApiRequest | IncomingMessage,
+  res: NextApiResponse | ServerResponse
 ): Promise<any> => {
   const handler = nextConnect()
   handler.use(session).use(initializeDB).use(authMiddleware)

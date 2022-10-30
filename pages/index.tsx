@@ -2,14 +2,15 @@ import Button from 'components/bootstrap/Button'
 import Card, { CardBody } from 'components/bootstrap/Card'
 import FormGroup from 'components/bootstrap/forms/FormGroup'
 import Input from 'components/bootstrap/forms/Input'
-import AuthContext from 'contexts/authContext'
 import { useFormik } from 'formik'
 import useDarkMode from 'hooks/useDarkMode'
 import Page from 'layout/Page/Page'
 import PageWrapper from 'layout/PageWrapper/PageWrapper'
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useCallback, useContext, useEffect } from 'react'
+import { useEffect } from 'react'
+import { Api } from 'utils/api'
+import nextMiddleware from 'utils/nextMiddleware'
 import * as Yup from 'yup'
 
 type LoginPayloadType = {
@@ -17,45 +18,39 @@ type LoginPayloadType = {
   password: string
 }
 
-const Login: NextPage = () => {
+const Login: NextPage = ({ isLogin }: any) => {
   const initialPayload: LoginPayloadType = {
     email: '',
     password: '',
   }
-  const router = useRouter()
-  const { user, setUser } = useContext(AuthContext)
+  const { push } = useRouter()
   const { darkModeStatus } = useDarkMode()
 
-  const handleNavigate = useCallback(() => router.push('/'), [router])
-
   useEffect(() => {
-    if (user) {
-      router.push('/')
+    if (isLogin) {
+      push('/main')
     }
-  }, [user, router])
+  }, [isLogin, push])
 
-  // const handleLogin = async (payload: LoginPayloadType) => {
-  //   try {
-  //     const { data } = await Api('CONFIGURATION').post('auth/signin', {
-  //       ...payload,
-  //     })
-  //     const userData: IAuth = {
-  //       ...data.data,
-  //       token: data.auth_token,
-  //     }
-  //     if (setUser) {
-  //       setUser(userData)
-  //     }
-  //     handleNavigate()
-  //   } catch (error: any) {
-  //     if (error?.message) {
-  //       formik.setFieldError('email', error.message)
-  //     }
-  //   }
-  // }
+  const handleLogin = async (payload: LoginPayloadType) => {
+    try {
+      const {
+        data: { redirect },
+      } = await Api().post('auth/login', payload)
+      push(redirect)
+    } catch (error: any) {
+      if (error?.message) {
+        if (error?.field) {
+          formik.setFieldError(error.field, error.message)
+        } else {
+          formik.setFieldError('email', error.message)
+        }
+      }
+    }
+  }
 
   const goToRegisterPage = () => {
-    router.push('/register')
+    push('/register')
   }
 
   const LoginSchema = Yup.object().shape({
@@ -69,8 +64,7 @@ const Login: NextPage = () => {
     validationSchema: LoginSchema,
     validateOnChange: false,
     onSubmit: (values) => {
-      // handleLogin(values)
-      router.push('/main')
+      handleLogin(values)
     },
   })
   return (
@@ -105,7 +99,6 @@ const Login: NextPage = () => {
                       <FormGroup id="email" isFloating label="Email">
                         <Input
                           type="email"
-                          autoComplete="email"
                           value={formik.values.email}
                           isTouched={formik.touched.email}
                           invalidFeedback={formik.errors.email}
@@ -124,7 +117,6 @@ const Login: NextPage = () => {
                         <Input
                           type="password"
                           placeholder="password"
-                          autoComplete="current-password"
                           value={formik.values.password}
                           isTouched={formik.touched.password}
                           invalidFeedback={formik.errors.password}
@@ -174,6 +166,15 @@ const Login: NextPage = () => {
       </Page>
     </PageWrapper>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  try {
+    const { user } = await nextMiddleware(req, res)
+    return { props: { user: user, isLogin: !!user } }
+  } catch (e) {
+    return { props: { user: null, isLogin: null } }
+  }
 }
 
 export default Login

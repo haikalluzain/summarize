@@ -3,29 +3,34 @@ import Card from 'components/bootstrap/Card'
 import AuthContext from 'contexts/authContext'
 import Page from 'layout/Page/Page'
 import PageWrapper from 'layout/PageWrapper/PageWrapper'
-import type { NextPage } from 'next'
+import moment from 'moment'
+import type { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useCallback, useContext, useEffect } from 'react'
 import {
   buildStyles,
   CircularProgressbarWithChildren,
 } from 'react-circular-progressbar'
+import nextMiddleware from 'utils/nextMiddleware'
 
 const dummy = [
   {
-    id: 'abc123',
-    name: 'CV Haikal Updated',
-    progress: 55,
+    id: 'abc789',
+    name: 'Untitled CV',
+    progress: 0,
+    createdAt: moment('2022-05-11 21:02:39').format('DD MMM YYYY HH:mm:ss'),
   },
   {
     id: 'abc456',
-    name: 'Untitled CV',
-    progress: 0,
+    name: 'CV Zhafari',
+    progress: 67,
+    createdAt: moment('2021-12-28 09:30:01').format('DD MMM YYYY HH:mm:ss'),
   },
   {
-    id: 'abc789',
-    name: 'Untitled CV  2',
-    progress: 0,
+    id: 'abc123',
+    name: 'CV Haikal',
+    progress: 55,
+    createdAt: moment('2021-10-04 12:14:43').format('DD MMM YYYY HH:mm:ss'),
   },
 ]
 
@@ -88,7 +93,7 @@ const Main: NextPage = () => {
                         </CircularProgressbarWithChildren>
                       </div>
                       <p className="fs-5 fw-bold mb-1">{cv.name}</p>
-                      <p className="text-muted">30 Oct 2022 10:10:10</p>
+                      <p className="text-muted">{cv.createdAt}</p>
                       <div className="row g-3">
                         <div className="col-12">
                           <Button
@@ -126,6 +131,15 @@ const Main: NextPage = () => {
       </Page>
     </PageWrapper>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  try {
+    const { user } = await nextMiddleware(req, res)
+    return { props: { user: user, isLogin: !!user } }
+  } catch (e) {
+    return { props: { user: null, isLogin: null } }
+  }
 }
 
 export default Main

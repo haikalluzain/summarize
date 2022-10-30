@@ -113,11 +113,11 @@ const Education: React.FC<{}> = () => {
       <div className="col-12">
         <Card tag="form" noValidate onSubmit={formik.handleSubmit}>
           <CardHeader>
-            <CardLabel icon="Work" iconColor="primary">
+            <CardLabel icon="School" iconColor="primary">
               <CardTitle>Education</CardTitle>
             </CardLabel>
           </CardHeader>
-          <CardBody className="pb-0">
+          <CardBody>
             <div className="row g-4">
               <div className="col-12">
                 <FormGroup

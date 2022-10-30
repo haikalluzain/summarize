@@ -36,14 +36,10 @@ const Summary: React.FC<{}> = () => {
               <CardTitle>Summary</CardTitle>
             </CardLabel>
           </CardHeader>
-          <CardBody className="pb-0">
+          <CardBody>
             <div className="row">
               <div className="col-12">
-                <FormGroup
-                  id="summaryFormGroup"
-                  label="Your Professional Summary"
-                  isFloating
-                >
+                <FormGroup id="summaryFormGroup">
                   <Textarea
                     placeholder="Your Professional Summary"
                     autoComplete="summary"
