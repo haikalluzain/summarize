@@ -1,27 +1,27 @@
-import React, {
-  useContext,
-  forwardRef,
-  useState,
-  useRef,
-  useCallback,
-  ReactNode,
-  FC,
-  HTMLAttributes,
-} from 'react'
-import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import { useWindowSize } from 'react-use'
+import PropTypes from 'prop-types'
+import {
+  FC,
+  forwardRef,
+  HTMLAttributes,
+  ReactNode,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from 'react'
 import { Manager, Popper, Reference } from 'react-popper'
+import { useWindowSize } from 'react-use'
 // @ts-ignore
 import useEventOutside from '@omtanke/react-use-event-outside'
+import { NavLink } from 'components/NavLink'
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
+import Collapse from '../../components/bootstrap/Collapse'
 import Icon from '../../components/icon/Icon'
 import ThemeContext from '../../contexts/themeContext'
-import Collapse from '../../components/bootstrap/Collapse'
 import useDarkMode from '../../hooks/useDarkMode'
 import { TIcons } from '../../types/icons'
-import { useRouter } from 'next/router'
-import { NavLink } from 'components/NavLink'
 
 interface IListProps extends HTMLAttributes<HTMLUListElement> {
   id?: string
@@ -231,8 +231,10 @@ export const Item: FC<IItemProps> = ({
   const closeMenu = useCallback(() => {
     setDropdownStatus(false)
   }, [])
-  useEventOutside(dropdownRef, 'mousedown', closeMenu)
-  useEventOutside(dropdownRef, 'touchstart', closeMenu)
+  if (typeof window !== 'undefined') {
+    useEventOutside(dropdownRef, 'mousedown', closeMenu)
+    useEventOutside(dropdownRef, 'touchstart', closeMenu)
+  }
 
   if (children) {
     // submenu && in header

@@ -45,7 +45,7 @@ const CvEditPage: NextPage = () => {
     <PageWrapper title={'Edit'}>
       <Page container="fluid">
         <div className="row h-100">
-          <div className="col-xl-3 col-lg-4 col-md-6">
+          <div className="col-xl-2 col-lg-3 col-md-5">
             <Card stretch>
               <CardHeader>
                 <CardLabel icon="Person" iconColor="primary">
@@ -148,7 +148,7 @@ const CvEditPage: NextPage = () => {
               </CardFooter> */}
             </Card>
           </div>
-          <div className="col-xl-9 col-lg-8 col-md-6">
+          <div className="col-xl-10 col-lg-9 col-md-7">
             <div className="row h-100 justify-content-center">
               <div className="col-xl-6 col-lg-9 col-md-12">
                 {TABS.PERSONAL_DETAIL === activeTab && <PersonalDetail />}

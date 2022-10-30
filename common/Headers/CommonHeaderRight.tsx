@@ -17,6 +17,8 @@ import ThemeContext from 'contexts/themeContext'
 import useDarkMode from 'hooks/useDarkMode'
 import { getLangWithKey, ILang } from 'lang'
 import { HeaderRight } from 'layout/Header/Header'
+import Navigation from 'layout/Navigation/Navigation'
+import { cvMenu } from 'menu'
 import { useRouter } from 'next/router'
 import PropTypes from 'prop-types'
 import { FC, ReactNode, useContext, useLayoutEffect, useState } from 'react'
@@ -77,17 +79,28 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({
 
   return (
     <HeaderRight>
-      <div className="row g-3">
+      <div className="row g-5">
         {beforeChildren}
 
-        {/* Quick Panel */}
         <div className="col-auto">
+          <Navigation menu={cvMenu} id="summary-top-menu" horizontal={true} />
+        </div>
+
+        <div className="col-auto pt-1">
           <Dropdown>
             <DropdownToggle hasIcon={false}>
-              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-              <Button {...styledBtn} icon="Person" aria-label="Quick menu" />
+              <Button
+                {...styledBtn}
+                className="btn-only-icon"
+                icon="Person"
+                aria-label="Quick menu"
+              />
             </DropdownToggle>
-            <DropdownMenu isAlignmentEnd size="lg" className="overflow-hidden">
+            <DropdownMenu
+              isAlignmentEnd
+              size="lg"
+              className="py-0 overflow-hidden"
+            >
               <DropdownItem>Account Settings</DropdownItem>
               <DropdownItem isDivider />
               <DropdownItem>

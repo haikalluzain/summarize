@@ -1,37 +1,16 @@
-export const homeMenu = {
-  intro: {
-    id: 'intro',
-    text: 'Intro',
-    path: '#intro',
-    icon: 'Vrpano',
+export const cvMenu = {
+  cv: {
+    id: 'cvEdit',
+    text: 'CV',
+    path: '/main/cv/[id]',
+    icon: 'Article',
     subMenu: null,
   },
-  bootstrap: {
-    id: 'bootstrap',
-    text: 'Bootstrap Components',
-    path: '#bootstrap',
-    icon: 'BootstrapFill',
-    subMenu: null,
-  },
-  storybook: {
-    id: 'storybook',
-    text: 'Storybook',
-    path: '#storybook',
-    icon: 'CustomStorybook',
-    subMenu: null,
-  },
-  formik: {
-    id: 'formik',
-    text: 'Formik',
-    path: '#formik',
-    icon: 'CheckBox',
-    subMenu: null,
-  },
-  apex: {
-    id: 'apex',
-    text: 'Apex Charts',
-    path: '#apex',
-    icon: 'AreaChart',
+  preview: {
+    id: 'preview',
+    text: 'Preview',
+    path: '/preview',
+    icon: 'RemoveRedEye',
     subMenu: null,
   },
 }
