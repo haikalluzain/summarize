@@ -1,8 +1,8 @@
-import { IUser } from './IUser'
+import { IResume } from './IResume'
 
 export interface IExperience {
   _id?: string
-  user: IUser
+  resume: IResume
   jobTitle: string
   company: string
   startYear: number

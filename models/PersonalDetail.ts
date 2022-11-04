@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose'
-import { v4 } from 'uuid'
 import { IPersonalDetail } from 'types/IPersonalDetail'
+import { v4 } from 'uuid'
 
 export const PerIPersonalDetailSchema = new Schema(
   {
@@ -10,10 +10,10 @@ export const PerIPersonalDetailSchema = new Schema(
         return v4()
       },
     },
-    user: {
+    resume: {
       type: String,
       required: true,
-      ref: 'User',
+      ref: 'Resume',
     },
     firstName: {
       type: String,

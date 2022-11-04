@@ -1,8 +1,8 @@
-import { IUser } from './IUser'
+import { IResume } from './IResume'
 
 export interface IPersonalDetail {
   _id?: string
-  user: IUser
+  resume: IResume
   firstName: string
   lastName?: string
   jobTitle: string

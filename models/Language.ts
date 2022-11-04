@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose'
-import { v4 } from 'uuid'
 import { ILanguage } from 'types/ILanguage'
+import { v4 } from 'uuid'
 
 export const LanguageSchema = new Schema(
   {
@@ -10,10 +10,10 @@ export const LanguageSchema = new Schema(
         return v4()
       },
     },
-    user: {
+    resume: {
       type: String,
       required: true,
-      ref: 'User',
+      ref: 'Resume',
     },
     name: {
       type: String,

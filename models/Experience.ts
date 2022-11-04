@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose'
-import { v4 } from 'uuid'
 import { IExperience } from 'types/IExperience'
+import { v4 } from 'uuid'
 
 export const ExIExperienceSchema = new Schema(
   {
@@ -10,10 +10,10 @@ export const ExIExperienceSchema = new Schema(
         return v4()
       },
     },
-    user: {
+    resume: {
       type: String,
       required: true,
-      ref: 'User',
+      ref: 'Resume',
     },
     jobTitle: {
       type: String,

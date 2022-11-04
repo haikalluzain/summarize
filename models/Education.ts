@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose'
-import { v4 } from 'uuid'
 import { IEducation } from 'types/IEducation'
+import { v4 } from 'uuid'
 
 export const EducationSchema = new Schema(
   {
@@ -10,10 +10,10 @@ export const EducationSchema = new Schema(
         return v4()
       },
     },
-    user: {
+    resume: {
       type: String,
       required: true,
-      ref: 'User',
+      ref: 'Resume',
     },
     institute: {
       type: String,

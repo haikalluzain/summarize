@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose'
-import { v4 } from 'uuid'
 import { ISkill } from 'types/ISkill'
+import { v4 } from 'uuid'
 
 export const SkillSchema = new Schema(
   {
@@ -10,10 +10,10 @@ export const SkillSchema = new Schema(
         return v4()
       },
     },
-    user: {
+    resume: {
       type: String,
       required: true,
-      ref: 'User',
+      ref: 'Resume',
     },
     name: {
       type: String,

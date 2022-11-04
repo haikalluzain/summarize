@@ -1,6 +1,6 @@
 import { Document, model, Model, Schema } from 'mongoose'
-import { v4 } from 'uuid'
 import { ISummary } from 'types/ISummary'
+import { v4 } from 'uuid'
 
 export const SummarySchema = new Schema(
   {
@@ -14,10 +14,10 @@ export const SummarySchema = new Schema(
       type: String,
       required: true,
     },
-    user: {
+    resume: {
       type: String,
       required: true,
-      ref: 'User',
+      ref: 'Resume',
     },
   },
   { timestamps: {} }

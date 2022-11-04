@@ -1,8 +1,8 @@
-import { IUser } from './IUser'
+import { IResume } from './IResume'
 
 export interface ICertificate {
   _id?: string
-  user: IUser
+  resume: IResume
   name: string
   organization: string
   startYear: number

@@ -1,8 +1,8 @@
-import { IUser } from './IUser'
+import { IResume } from './IResume'
 
 export interface ISummary {
   _id?: string
-  user: IUser
+  resume: IResume
   body: string
   active: boolean
 }

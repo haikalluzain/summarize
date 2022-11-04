@@ -1,8 +1,8 @@
-import { IUser } from './IUser'
+import { IResume } from './IResume'
 
 export interface ISkill {
   _id?: string
-  user: IUser
+  resume: IResume
   name: string
   rating: string
   createdAt?: Date

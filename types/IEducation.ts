@@ -1,8 +1,8 @@
-import { IUser } from './IUser'
+import { IResume } from './IResume'
 
 export interface IEducation {
   _id?: string
-  user: IUser
+  resume: IResume
   institute: string
   degree: string
   graduationYear: number

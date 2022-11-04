@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 const loadModels = () => {
   require('./User')
+  require('./Resume')
   require('./Summary')
   require('./Education')
   require('./Experience')
@@ -24,7 +25,7 @@ export const ConnectDB = async () => {
     }
 
     if (!(global as any).mongoose) {
-      const mongoDBConn = `mongodb://localhost/tidy`
+      const mongoDBConn = `mongodb://localhost/summarize`
       console.log('[DB] Connecting to database...')
       console.time('[DB] Connected')
       ;(global as any).mongoose = await mongoose.connect(
