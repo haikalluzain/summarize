@@ -1,4 +1,4 @@
-import { useTour } from '@reactour/tour'
+import classNames from 'classnames'
 import Alert from 'components/bootstrap/Alert'
 import Button, { IButtonProps } from 'components/bootstrap/Button'
 import Dropdown, {
@@ -11,14 +11,11 @@ import OffCanvas, {
   OffCanvasHeader,
   OffCanvasTitle,
 } from 'components/bootstrap/OffCanvas'
-import showNotification from 'components/extras/showNotification'
 import Icon from 'components/icon/Icon'
+import { NavLink } from 'components/NavLink'
 import ThemeContext from 'contexts/themeContext'
 import useDarkMode from 'hooks/useDarkMode'
-import { getLangWithKey, ILang } from 'lang'
 import { HeaderRight } from 'layout/Header/Header'
-import Navigation from 'layout/Navigation/Navigation'
-import { cvMenu } from 'menu'
 import { useRouter } from 'next/router'
 import PropTypes from 'prop-types'
 import { FC, ReactNode, useContext, useLayoutEffect, useState } from 'react'
@@ -34,7 +31,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({
   afterChildren,
 }) => {
   const { darkModeStatus, setDarkModeStatus } = useDarkMode()
-  const { push } = useRouter()
+  const { push, query, pathname } = useRouter()
 
   const { fullScreenStatus, setFullScreenStatus } = useContext(ThemeContext)
   const styledBtn: IButtonProps = {
@@ -47,17 +44,6 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({
   const [offcanvasStatus, setOffcanvasStatus] = useState(false)
 
   const { i18n } = useTranslation()
-
-  const changeLanguage = (lng: ILang['key']['lng']) => {
-    i18n.changeLanguage(lng)
-    showNotification(
-      <span className="d-flex align-items-center">
-        <Icon icon={getLangWithKey(lng)?.icon} size="lg" className="me-1" />
-        <span>{`Language changed to ${getLangWithKey(lng)?.text}`}</span>
-      </span>,
-      'You updated the language of the site. (Only "Aside" was prepared as an example.)'
-    )
-  }
 
   const handleLogout = async () => {
     try {
@@ -75,16 +61,56 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({
     document.documentElement.setAttribute('lang', i18n.language)
   })
 
-  const { setIsOpen } = useTour()
-
   return (
     <HeaderRight>
       <div className="row g-5">
         {beforeChildren}
 
-        <div className="col-auto">
-          <Navigation menu={cvMenu} id="summary-top-menu" horizontal={true} />
-        </div>
+        {pathname === '/main/cv/[id]' ||
+        pathname === '/main/cv/[id]/preview' ? (
+          <div className="col-auto">
+            <nav aria-label="summary-top-menu">
+              <ul className="navigation navigation-menu">
+                <li className="navigation-item">
+                  <NavLink
+                    className={classNames(
+                      'navigation-link',
+                      'navigation-link-pill',
+                      {
+                        // collapsed: !!children && !isHorizontal,
+                        active: pathname === '/main/cv/[id]',
+                      }
+                    )}
+                    href={`/main/cv/${query.id}`}
+                  >
+                    <span className="navigation-link-info">
+                      <Icon className="navigation-icon" icon="Article" />
+                      <span className="navigation-text">CV</span>
+                    </span>
+                  </NavLink>
+                </li>
+                <li className="navigation-item">
+                  <NavLink
+                    className={classNames(
+                      'navigation-link',
+                      'navigation-link-pill',
+                      {
+                        // collapsed: !!children && !isHorizontal,
+                        active: pathname === '/main/cv/[id]/preview',
+                      }
+                    )}
+                    href={`/main/cv/${query.id}/preview`}
+                  >
+                    <span className="navigation-link-info">
+                      <Icon className="navigation-icon" icon="RemoveRedEye" />
+                      <span className="navigation-text">Preview</span>
+                    </span>
+                  </NavLink>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        ) : null}
 
         <div className="col-auto pt-1">
           <Dropdown>
@@ -96,11 +122,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({
                 aria-label="Quick menu"
               />
             </DropdownToggle>
-            <DropdownMenu
-              isAlignmentEnd
-              size="lg"
-              className="py-0 overflow-hidden"
-            >
+            <DropdownMenu isAlignmentEnd size="lg" className="overflow-hidden">
               <DropdownItem>Account Settings</DropdownItem>
               <DropdownItem isDivider />
               <DropdownItem>

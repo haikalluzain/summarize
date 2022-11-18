@@ -10,9 +10,9 @@ const HeaderRoutes = () => {
   }, [])
 
   const renderHeader = () => {
-    if (new RegExp('^/main/(cv)', 'i').test(pathname)) {
+    if (pathname === '/main/cv/[id]' || pathname === '/main/cv/[id]/preview') {
       return <CvHeader />
-    } else if (new RegExp('^/(main)', 'i').test(pathname)) {
+    } else if (pathname === '/main') {
       return <MainHeader />
     }
 

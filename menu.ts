@@ -9,7 +9,7 @@ export const cvMenu = {
   preview: {
     id: 'preview',
     text: 'Preview',
-    path: '/preview',
+    path: '/main/cv/[id]/preview',
     icon: 'RemoveRedEye',
     subMenu: null,
   },
