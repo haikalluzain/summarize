@@ -1,8 +1,8 @@
 import { Document, model, Model, Schema } from 'mongoose'
-import { IEducation } from 'types/IEducation'
+import { ICertificate } from 'types/ICertificate'
 import { v4 } from 'uuid'
 
-export const EducationSchema = new Schema(
+export const CertificateSchema = new Schema(
   {
     _id: {
       type: String,
@@ -51,13 +51,13 @@ export const EducationSchema = new Schema(
   { timestamps: {} }
 )
 
-export interface IEducationDocument extends IEducation, Document {
+export interface ICertificateDocument extends ICertificate, Document {
   _id: string
 }
 
-export interface IEducationModel extends Model<IEducationDocument> {}
+export interface ICertificateModel extends Model<ICertificateDocument> {}
 
-export const EducationModel = model<
-  IEducationDocument,
-  IEducation & IEducationModel
->('Education', EducationSchema)
+export const CertificateModel = model<
+  ICertificateDocument,
+  ICertificate & ICertificateModel
+>('Certificate', CertificateSchema)

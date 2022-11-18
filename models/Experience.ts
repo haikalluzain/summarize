@@ -2,7 +2,7 @@ import { Document, model, Model, Schema } from 'mongoose'
 import { IExperience } from 'types/IExperience'
 import { v4 } from 'uuid'
 
-export const ExIExperienceSchema = new Schema(
+export const ExperienceSchema = new Schema(
   {
     _id: {
       type: String,
@@ -57,7 +57,7 @@ export interface IExperienceDocument extends IExperience, Document {
 
 export interface IExperienceModel extends Model<IExperienceDocument> {}
 
-export const ExIExperienceModel = model<
+export const ExperienceModel = model<
   IExperienceDocument,
   IExperience & IExperienceModel
->('ExIExperience', ExIExperienceSchema)
+>('Experience', ExperienceSchema)

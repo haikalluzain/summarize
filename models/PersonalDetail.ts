@@ -2,7 +2,7 @@ import { Document, model, Model, Schema } from 'mongoose'
 import { IPersonalDetail } from 'types/IPersonalDetail'
 import { v4 } from 'uuid'
 
-export const PerIPersonalDetailSchema = new Schema(
+export const PersonalDetailSchema = new Schema(
   {
     _id: {
       type: String,
@@ -61,7 +61,7 @@ export interface IPersonalDetailDocument extends IPersonalDetail, Document {
 
 export interface IPersonalDetailModel extends Model<IPersonalDetailDocument> {}
 
-export const PerIPersonalDetailModel = model<
+export const PersonalDetailModel = model<
   IPersonalDetailDocument,
   IPersonalDetail & IPersonalDetailModel
->('PerIPersonalDetail', PerIPersonalDetailSchema)
+>('PersonalDetail', PersonalDetailSchema)
