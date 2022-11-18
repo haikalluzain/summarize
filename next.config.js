@@ -4,9 +4,10 @@ const withTM = require('next-transpile-modules')([
   '@omtanke/react-use-event-outside',
 ])
 
-const nextConfig = {
+module.exports = withTM({
   reactStrictMode: true,
   swcMinify: true,
-}
-
-module.exports = withTM({ nextConfig })
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+})

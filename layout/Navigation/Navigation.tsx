@@ -128,7 +128,7 @@ export const Item: FC<IItemProps> = ({
 
   const handleClick = () => {
     if (typeof props.setActiveItem !== 'undefined') {
-      // eslint-disable-next-line react/prop-types, @typescript-eslint/no-unused-expressions
+      // eslint-disable-next-line react/prop-types
       ACTIVE ? props.setActiveItem(null) : props.setActiveItem(id)
     }
   }

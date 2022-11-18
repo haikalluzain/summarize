@@ -1,13 +1,13 @@
-import React, { FC, HTMLAttributes, memo } from 'react'
-import PropTypes from 'prop-types'
-import ReactApexChart from 'react-apexcharts'
-import classNames from 'classnames'
 import { ApexOptions } from 'apexcharts'
+import classNames from 'classnames'
+import PropTypes from 'prop-types'
+import { FC, HTMLAttributes, memo } from 'react'
+import ReactApexChart from 'react-apexcharts'
 
 interface IChartProps extends HTMLAttributes<HTMLDivElement> {
   series: ApexOptions['series']
   options: ApexOptions
-  type?: ApexChart['type']
+  type?: ApexChart['type'] | any
   width?: string | number
   height?: string | number
   className?: string

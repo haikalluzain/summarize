@@ -111,9 +111,9 @@ const Sheet: React.FC<{}> = () => {
                 <hr style={{ borderTop: 'dotted 2px' }} />
                 <p className="mt-3" style={{ fontSize: '14px' }}>
                   I have been focused on programming since high school. Even
-                  though I haven't graduated with my bachelor's degree, I can
-                  compete with those who already have. I can easily learn new
-                  things in the software development orbit.
+                  though I haven&lsquo;t graduated with my bachelor&lsquo;s
+                  degree, I can compete with those who already have. I can
+                  easily learn new things in the software development orbit.
                 </p>
               </div>
 
@@ -164,7 +164,7 @@ const Sheet: React.FC<{}> = () => {
                         Computer Science
                       </p>
                       <span className="text-muted">
-                        Mercu Buana University - Bachelor's Degree
+                        Mercu Buana University - Bachelor&lsquo;s Degree
                       </span>
                     </div>
                     <div className="col-6 text-end">

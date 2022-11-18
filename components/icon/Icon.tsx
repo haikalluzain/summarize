@@ -1,18 +1,18 @@
-import React, { forwardRef, HTMLAttributes, memo, ReactNode } from 'react'
-import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import * as SvgIcon from './svg-icons'
-import * as Bootstrap from './bootstrap'
-import * as Material from './material-icons'
 import pascalcase from 'pascalcase'
+import PropTypes from 'prop-types'
+import { forwardRef, HTMLAttributes, memo, ReactNode } from 'react'
 import { TColor } from '../../types/color'
 import { TIcons } from '../../types/icons'
+import * as Bootstrap from './bootstrap'
+import * as Material from './material-icons'
+import * as SvgIcon from './svg-icons'
 
 interface IRefWrapperProps extends Record<string, any> {
   children: ReactNode
 }
 // @ts-ignore
-const RefWrapper = forwardRef<HTMLSpanElement, IRefWrapperProps>(
+const RefWrapper = forwardRef<HTMLSpanElement, IRefWrapperProps, any>(
   ({ children }, ref) => {
     if (ref) {
       return (
@@ -24,6 +24,7 @@ const RefWrapper = forwardRef<HTMLSpanElement, IRefWrapperProps>(
     return children
   }
 )
+RefWrapper.displayName = 'RefWrapper'
 
 interface IIconProps extends HTMLAttributes<HTMLSpanElement> {
   icon?: TIcons
@@ -157,5 +158,6 @@ Icon.defaultProps = {
   size: null,
   forceFamily: null,
 }
+Icon.displayName = 'Icon'
 
 export default memo(Icon)

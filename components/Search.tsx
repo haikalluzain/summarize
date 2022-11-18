@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
 import { useFormik } from 'formik'
-import Icon from './icon/Icon'
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
 import Input from './bootstrap/forms/Input'
 import Modal, { ModalBody, ModalHeader } from './bootstrap/Modal'
-import { componentsMenu } from '../menu'
-import { useRouter } from 'next/router'
+import Icon from './icon/Icon'
 
 const Search = () => {
   const refSearchInput = useRef<HTMLInputElement>(null)
@@ -14,7 +13,6 @@ const Search = () => {
     initialValues: {
       searchInput: '',
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSubmit: (values) => {
       setSearchModalStatus(true)
     },
@@ -38,12 +36,12 @@ const Search = () => {
       icon: string
     }
   } = {
-    ...componentsMenu.components.subMenu,
-    ...componentsMenu.content.subMenu,
-    ...componentsMenu.forms.subMenu,
-    ...componentsMenu.utilities.subMenu,
-    ...componentsMenu.icons.subMenu,
-    ...componentsMenu.charts.subMenu,
+    // ...componentsMenu.components.subMenu,
+    // ...componentsMenu.content.subMenu,
+    // ...componentsMenu.forms.subMenu,
+    // ...componentsMenu.utilities.subMenu,
+    // ...componentsMenu.icons.subMenu,
+    // ...componentsMenu.charts.subMenu,
   }
   const filterResult = Object.keys(searchPages)
     .filter(
@@ -134,7 +132,8 @@ const Search = () => {
               ) : (
                 <tr className="table-active">
                   <td>
-                    No result found for query "{formik.values.searchInput}"
+                    No result found for query &quot;{formik.values.searchInput}
+                    &quot;
                   </td>
                 </tr>
               )}

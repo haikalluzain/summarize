@@ -1,7 +1,13 @@
-import React, { FC, useState } from 'react'
-import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
+import PropTypes from 'prop-types'
+import { FC, useState } from 'react'
+import TAGS from '../../common/data/boardTagsData'
+import USERS from '../../common/data/userDummyData'
+import useDarkMode from '../../hooks/useDarkMode'
+import { TColor } from '../../types/color'
+import Badge from '../bootstrap/Badge'
+import Button from '../bootstrap/Button'
 import Card, {
   CardActions,
   CardBody,
@@ -11,29 +17,23 @@ import Card, {
   CardLabel,
   CardTitle,
 } from '../bootstrap/Card'
-import Button from '../bootstrap/Button'
-import Badge from '../bootstrap/Badge'
-import BoardCard, { TBoardCard } from './BoardCard'
 import Dropdown, {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
 } from '../bootstrap/Dropdown'
+import FormGroup from '../bootstrap/forms/FormGroup'
+import Input from '../bootstrap/forms/Input'
+import Select from '../bootstrap/forms/Select'
+import Textarea from '../bootstrap/forms/Textarea'
 import Modal, {
   ModalBody,
   ModalFooter,
   ModalHeader,
   ModalTitle,
 } from '../bootstrap/Modal'
-import FormGroup from '../bootstrap/forms/FormGroup'
-import Input from '../bootstrap/forms/Input'
-import Textarea from '../bootstrap/forms/Textarea'
-import Select from '../bootstrap/forms/Select'
 import Option from '../bootstrap/Option'
-import USERS from '../../common/data/userDummyData'
-import TAGS from '../../common/data/boardTagsData'
-import useDarkMode from '../../hooks/useDarkMode'
-import { TColor } from '../../types/color'
+import BoardCard, { TBoardCard } from './BoardCard'
 
 interface IBoardGroupProps {
   groups: {
@@ -60,7 +60,7 @@ const BoardGroup: FC<IBoardGroupProps> = ({ groups, data, setData }) => {
       task: [],
       tags: [],
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line
     onSubmit: (values) => {
       setEditModalStatus(false)
     },

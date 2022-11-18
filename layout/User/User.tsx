@@ -1,16 +1,15 @@
-import React, { useState, useContext } from 'react'
-import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
-import { demoPages } from '../../menu'
-import { DropdownItem, DropdownMenu } from '../../components/bootstrap/Dropdown'
-import Button from '../../components/bootstrap/Button'
-import useDarkMode from '../../hooks/useDarkMode'
-import Collapse from '../../components/bootstrap/Collapse'
-import { NavigationLine } from '../Navigation/Navigation'
-import Icon from '../../components/icon/Icon'
-import useNavigationItemHandle from '../../hooks/useNavigationItemHandle'
-import AuthContext from '../../contexts/authContext'
 import { useRouter } from 'next/router'
+import { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import Button from '../../components/bootstrap/Button'
+import Collapse from '../../components/bootstrap/Collapse'
+import { DropdownItem, DropdownMenu } from '../../components/bootstrap/Dropdown'
+import Icon from '../../components/icon/Icon'
+import AuthContext from '../../contexts/authContext'
+import useDarkMode from '../../hooks/useDarkMode'
+import useNavigationItemHandle from '../../hooks/useNavigationItemHandle'
+import { NavigationLine } from '../Navigation/Navigation'
 
 const User = () => {
   const { userData, setUser } = useContext(AuthContext)
@@ -51,11 +50,11 @@ const User = () => {
         <DropdownItem>
           <Button
             icon="AccountBox"
-            onClick={() =>
-              push(
-                `../${demoPages.appointment.subMenu.employeeID.path}/${userData?.id}`
-              )
-            }
+            // onClick={() =>
+            //   push(
+            //     `../${demoPages.appointment.subMenu.employeeID.path}/${userData?.id}`
+            //   )
+            // }
           >
             Profile
           </Button>
@@ -79,7 +78,7 @@ const User = () => {
               className="cursor-pointer navigation-item"
               onClick={() =>
                 push(
-                  `../${demoPages.appointment.subMenu.employeeID.path}/${userData?.id}`,
+                  // `../${demoPages.appointment.subMenu.employeeID.path}/${userData?.id}`,
                   // @ts-ignore
                   handleItem()
                 )
@@ -125,7 +124,7 @@ const User = () => {
                 if (setUser) {
                   setUser('')
                 }
-                push(`../${demoPages.login.path}`)
+                // push(`../${demoPages.login.path}`)
               }}
             >
               <span className="navigation-link navigation-link-pill">

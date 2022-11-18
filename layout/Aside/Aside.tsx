@@ -1,26 +1,18 @@
-import React, { useContext, useRef, useState } from 'react'
 import classNames from 'classnames'
 import { motion, MotionStyle } from 'framer-motion'
+import { useContext, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Brand from '../Brand/Brand'
-import Navigation, { NavigationLine } from '../Navigation/Navigation'
-import User from '../User/User'
-import {
-  componentsMenu,
-  dashboardMenu,
-  demoPages,
-  layoutMenu,
-} from '../../menu'
-import ThemeContext from '../../contexts/themeContext'
 import Card, { CardBody } from '../../components/bootstrap/Card'
+import ThemeContext from '../../contexts/themeContext'
+import Brand from '../Brand/Brand'
+import { NavigationLine } from '../Navigation/Navigation'
+import User from '../User/User'
 
-import Hand from '../../assets/img/hand.png'
-import HandWebp from '../../assets/img/hand.webp'
-import Icon from '../../components/icon/Icon'
 import Button from '../../components/bootstrap/Button'
 import Tooltips from '../../components/bootstrap/Tooltips'
-import useDarkMode from '../../hooks/useDarkMode'
+import Icon from '../../components/icon/Icon'
 import useAsideTouch from '../../hooks/useAsideTouch'
+import useDarkMode from '../../hooks/useDarkMode'
 
 const Aside = () => {
   const { asideStatus, setAsideStatus } = useContext(ThemeContext)
@@ -58,20 +50,20 @@ const Aside = () => {
           <Brand asideStatus={asideStatus} setAsideStatus={setAsideStatus} />
         </div>
         <div className="aside-body">
-          <Navigation menu={dashboardMenu} id="aside-dashboard" />
+          {/* <Navigation menu={dashboardMenu} id="aside-dashboard" /> */}
           {!doc && (
             <>
               <NavigationLine />
-              <Navigation menu={demoPages} id="aside-demo-pages" />
+              {/* <Navigation menu={demoPages} id="aside-demo-pages" /> */}
               <NavigationLine />
-              <Navigation menu={layoutMenu} id="aside-menu" />
+              {/* <Navigation menu={layoutMenu} id="aside-menu" /> */}
             </>
           )}
 
           {doc && (
             <>
               <NavigationLine />
-              <Navigation menu={componentsMenu} id="aside-menu-two" />
+              {/* <Navigation menu={componentsMenu} id="aside-menu-two" /> */}
               <NavigationLine />
             </>
           )}
@@ -80,8 +72,8 @@ const Aside = () => {
             <Card className="m-3 ">
               <CardBody className="pt-0">
                 <img
-                  srcSet={HandWebp}
-                  src={Hand}
+                  srcSet="../../assets/img/hand.webp"
+                  src="../../assets/img/hand.png"
                   alt="Hand"
                   width={130}
                   height={130}

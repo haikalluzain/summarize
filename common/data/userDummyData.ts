@@ -147,14 +147,18 @@ const USERS: { [key: string]: IUserProps } = {
 export function getUserDataWithUsername(username: string): IUserProps {
   // @ts-ignore
   return USERS[
-    Object.keys(USERS).filter((f) => USERS[f].username.toString() === username)
+    Object.keys(USERS).filter(
+      (f) => USERS[f].username.toString() === username
+    )[0]
   ]
 }
 
 export function getUserDataWithId(id?: string): IUserProps {
   // @ts-ignore
   return USERS[
-    Object.keys(USERS).filter((f) => USERS[f].id.toString() === id.toString())
+    Object.keys(USERS).filter(
+      (f) => USERS[f].id.toString() === id.toString()
+    )[0]
   ]
 }
 

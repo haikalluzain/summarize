@@ -1,20 +1,19 @@
-import React, {
+import classNames from 'classnames'
+import PropTypes from 'prop-types'
+import {
   cloneElement,
   ElementType,
-  forwardRef,
   FC,
+  forwardRef,
+  HTMLAttributes,
   JSXElementConstructor,
   ReactElement,
   ReactNode,
   useCallback,
   useRef,
   useState,
-  HTMLAttributes,
-  useEffect,
 } from 'react'
-import PropTypes from 'prop-types'
 import { Manager, Popper, Reference } from 'react-popper'
-import classNames from 'classnames'
 // @ts-ignore
 import useEventOutside from '@omtanke/react-use-event-outside'
 import useDarkMode from '../../hooks/useDarkMode'
@@ -55,7 +54,7 @@ export const DropdownToggle: FC<IDropdownToggleProps> = ({
             ref: (node: null) => setButtonRef(node, ref),
             onClick: () => {
               // @ts-ignore
-              // eslint-disable-next-line no-unused-expressions,@typescript-eslint/no-unused-expressions
+              // eslint-disable-next-line no-unused-expressions
               children?.props?.onClick ? children.props.onClick() : null
               if (setIsOpen) {
                 setIsOpen(!isOpen)
@@ -242,7 +241,10 @@ ItemWrapper.defaultProps = {
 }
 
 interface IDropdownItemProps extends HTMLAttributes<HTMLLIElement> {
-  children?: ReactElement<any, string | JSXElementConstructor<any>> | string
+  children?:
+    | ReactElement<any, string | JSXElementConstructor<any>>
+    | string
+    | any
   isHeader?: boolean
   isDivider?: boolean
   isText?: boolean
@@ -367,6 +369,7 @@ const Dropdown: FC<IDropdownProps> = ({
   }, [isOpen, setIsOpen])
 
   if (typeof window !== 'undefined') {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEventOutside(dropdownRef, 'mousedown', closeMenu)
     useEventOutside(dropdownRef, 'touchstart', closeMenu)
   }

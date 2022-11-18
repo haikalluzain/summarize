@@ -1,21 +1,21 @@
-import React, {
-  forwardRef,
+import classNames from 'classnames'
+import ThemeContext from 'contexts/themeContext'
+import { AnimatePresence, motion } from 'framer-motion'
+import useDeviceScreen from 'hooks/useDeviceScreen'
+import useEventListener from 'hooks/useEventListener'
+import Portal from 'layout/Portal/Portal'
+import PropTypes from 'prop-types'
+import {
   FC,
+  forwardRef,
+  HTMLAttributes,
+  ReactElement,
   ReactNode,
   useContext,
   useLayoutEffect,
   useRef,
-  ReactElement,
-  HTMLAttributes,
 } from 'react'
-import PropTypes from 'prop-types'
-import classNames from 'classnames'
-import { AnimatePresence, motion } from 'framer-motion'
-import Portal from 'layout/Portal/Portal'
 import TagWrapper from '../TagWrapper'
-import useEventListener from 'hooks/useEventListener'
-import ThemeContext from 'contexts/themeContext'
-import useDeviceScreen from 'hooks/useDeviceScreen'
 
 interface IOffCanvasTitleProps extends HTMLAttributes<HTMLElement> {
   id: string
@@ -210,7 +210,7 @@ const OffCanvas: FC<IOffCanvasProps> = ({
     (initialProps.placement === 'bottom' && { y: '100%' }) || { x: '100%' }
 
   // @ts-ignore
-  const MotionTagWrapper = motion[Tag]
+  const MotionTagWrapper: any = motion[Tag]
 
   return (
     <Portal>
