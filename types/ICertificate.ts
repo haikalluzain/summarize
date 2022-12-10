@@ -2,7 +2,7 @@ import { IResume } from './IResume'
 
 export interface ICertificate {
   _id?: string
-  resume: IResume
+  resume?: IResume
   name: string
   organization: string
   startYear: number

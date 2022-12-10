@@ -19,6 +19,10 @@ export const ResumeSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    default: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: {} }
 )

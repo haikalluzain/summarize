@@ -2,7 +2,7 @@ import { IResume } from './IResume'
 
 export interface IPersonalDetail {
   _id?: string
-  resume: IResume
+  resume?: IResume
   firstName: string
   lastName?: string
   jobTitle: string

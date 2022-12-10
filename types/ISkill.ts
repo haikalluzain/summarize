@@ -2,7 +2,7 @@ import { IResume } from './IResume'
 
 export interface ISkill {
   _id?: string
-  resume: IResume
+  resume?: IResume
   name: string
   rating: string
   createdAt?: Date

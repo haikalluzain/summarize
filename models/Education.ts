@@ -27,7 +27,7 @@ export const EducationSchema = new Schema(
       type: Number,
       required: true,
     },
-    month: {
+    graduationMonth: {
       type: String,
       required: true,
     },

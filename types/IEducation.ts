@@ -2,11 +2,11 @@ import { IResume } from './IResume'
 
 export interface IEducation {
   _id?: string
-  resume: IResume
+  resume?: IResume
   institute: string
   degree: string
   graduationYear: number
-  month: string
+  graduationMonth: string
   description: string
   createdAt?: Date
   updatedAt?: Date
