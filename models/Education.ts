@@ -21,7 +21,11 @@ export const EducationSchema = new Schema(
     },
     degree: {
       type: String,
-      required: true,
+      required: false,
+    },
+    fieldOfStudy: {
+      type: String,
+      required: false,
     },
     graduationYear: {
       type: Number,
@@ -33,7 +37,7 @@ export const EducationSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   { timestamps: {} }

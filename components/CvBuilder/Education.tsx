@@ -16,6 +16,7 @@ import Textarea from 'components/bootstrap/forms/Textarea'
 import { useFormik } from 'formik'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
+import { IEducation } from 'types/IEducation'
 import * as Yup from 'yup'
 
 type SelectType = {
@@ -74,12 +75,34 @@ const months: SelectType[] = [
   },
 ]
 
-const Education: React.FC<{}> = () => {
+type EducationProps = {
+  data: IEducation[]
+}
+
+const Education: React.FC<EducationProps> = ({ data }) => {
+  return (
+    <div className="row">
+      <div className="col-12">
+        {data &&
+          data.map((education, index) => (
+            <Item education={education} firstIndex={index === 0} />
+          ))}
+      </div>
+    </div>
+  )
+}
+
+type EducationItemProps = {
+  education: IEducation
+  firstIndex: boolean
+}
+
+const Item: React.FC<EducationItemProps> = ({ education, firstIndex }) => {
   const [years, setYears] = useState<SelectType[]>([])
 
   useEffect(() => {
     let yearList: SelectType[] = []
-    for (let i = 2000; i <= moment().year(); i++) {
+    for (let i = 2000; i <= moment().add('year', 10).year(); i++) {
       yearList.push({
         text: i.toString(),
         value: i.toString(),
@@ -89,7 +112,7 @@ const Education: React.FC<{}> = () => {
   }, [])
 
   const EducationSchema = Yup.object().shape({
-    instituteName: Yup.string().required(),
+    institute: Yup.string().required(),
     degree: Yup.string().required(),
     graduationYear: Yup.string().required(),
     graduationMonth: Yup.string().required(),
@@ -97,147 +120,130 @@ const Education: React.FC<{}> = () => {
   })
 
   const formik = useFormik({
-    initialValues: {
-      instituteName: '',
-      degree: '',
-      graduationYear: '',
-      graduationMonth: '',
-      fieldOfStudy: '',
-    },
+    initialValues: { ...education },
     validationSchema: EducationSchema,
     onSubmit: () => {},
   })
 
   return (
-    <div className="row">
-      <div className="col-12">
-        <Card tag="form" noValidate onSubmit={formik.handleSubmit}>
-          <CardHeader>
-            <CardLabel icon="School" iconColor="primary">
-              <CardTitle>Education</CardTitle>
-            </CardLabel>
-          </CardHeader>
-          <CardBody>
-            <div className="row g-4">
-              <div className="col-12">
-                <FormGroup
-                  id="instituteName"
-                  label="University/School"
-                  isFloating
-                >
-                  <Input
-                    placeholder="University/School"
-                    autoComplete="instituteName"
+    <Card tag="form" noValidate onSubmit={formik.handleSubmit}>
+      {firstIndex && (
+        <CardHeader>
+          <CardLabel icon="School" iconColor="primary">
+            <CardTitle>Education</CardTitle>
+          </CardLabel>
+        </CardHeader>
+      )}
+      <CardBody>
+        <div className="row g-4">
+          <div className="col-12">
+            <FormGroup id="institute" label="University/School" isFloating>
+              <Input
+                placeholder="University/School"
+                autoComplete="institute"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.institute}
+                isValid={formik.isValid}
+                isTouched={formik.touched.institute}
+                invalidFeedback={formik.errors.institute}
+                validFeedback="Looks good!"
+              />
+            </FormGroup>
+          </div>
+          <div className="col-12">
+            <FormGroup id="degree" label="Degree" isFloating>
+              <Input
+                placeholder="Degree (E.g. Bachelor's Degree, High school Diploma, etc)"
+                autoComplete="degree"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.degree}
+                isValid={formik.isValid}
+                isTouched={formik.touched.degree}
+                invalidFeedback={formik.errors.degree}
+                validFeedback="Looks good!"
+              />
+            </FormGroup>
+          </div>
+          <div className="col-12">
+            <div className="row">
+              <Label className="fw-bold">Graduation</Label>
+              <div className="col-md-6">
+                <FormGroup id="graduationMonth" label="Month" isFloating>
+                  <Select
+                    ariaLabel="graduationMonth"
+                    placeholder="Month"
+                    list={months}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.instituteName}
+                    value={formik.values.graduationMonth}
                     isValid={formik.isValid}
-                    isTouched={formik.touched.instituteName}
-                    invalidFeedback={formik.errors.instituteName}
+                    isTouched={formik.touched.graduationMonth}
+                    invalidFeedback={formik.errors.graduationMonth}
                     validFeedback="Looks good!"
                   />
                 </FormGroup>
               </div>
-              <div className="col-12">
-                <FormGroup id="degree" label="Degree" isFloating>
-                  <Input
-                    placeholder="Degree (E.g. Bachelor's Degree, High school Diploma, etc)"
-                    autoComplete="degree"
+              <div className="col-md-6">
+                <FormGroup id="graduationYear" label="Year" isFloating>
+                  <Select
+                    ariaLabel="graduationYear"
+                    placeholder="Year"
+                    list={years}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.degree}
+                    value={formik.values.graduationYear.toString()}
                     isValid={formik.isValid}
-                    isTouched={formik.touched.degree}
-                    invalidFeedback={formik.errors.degree}
+                    isTouched={formik.touched.graduationYear}
+                    invalidFeedback={formik.errors.graduationYear}
                     validFeedback="Looks good!"
                   />
-                </FormGroup>
-              </div>
-              <div className="col-12">
-                <div className="row">
-                  <Label className="fw-bold">Graduation</Label>
-                  <div className="col-md-6">
-                    <FormGroup id="graduationMonth" label="Month" isFloating>
-                      <Select
-                        ariaLabel="graduationMonth"
-                        placeholder="Month"
-                        list={months}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.graduationMonth}
-                        isValid={formik.isValid}
-                        isTouched={formik.touched.graduationMonth}
-                        invalidFeedback={formik.errors.graduationMonth}
-                        validFeedback="Looks good!"
-                      />
-                    </FormGroup>
-                  </div>
-                  <div className="col-md-6">
-                    <FormGroup id="graduationYear" label="Year" isFloating>
-                      <Select
-                        ariaLabel="graduationYear"
-                        placeholder="Year"
-                        list={years}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.graduationYear}
-                        isValid={formik.isValid}
-                        isTouched={formik.touched.graduationYear}
-                        invalidFeedback={formik.errors.graduationYear}
-                        validFeedback="Looks good!"
-                      />
-                    </FormGroup>
-                  </div>
-                </div>
-              </div>
-              <div className="col-12">
-                <FormGroup id="fieldOfStudy" label="Field of Study" isFloating>
-                  <Input
-                    placeholder="Field of Study"
-                    autoComplete="fieldOfStudy"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.fieldOfStudy}
-                    isValid={formik.isValid}
-                    isTouched={formik.touched.fieldOfStudy}
-                    invalidFeedback={formik.errors.fieldOfStudy}
-                    validFeedback="Looks good!"
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-12">
-                <FormGroup className="col" id="exampleSizeTextareaLg">
-                  <Textarea placeholder="Achievements" />
                 </FormGroup>
               </div>
             </div>
-          </CardBody>
-          <CardFooter>
-            <CardFooterLeft>
-              <Button
-                color="primary"
-                isLink
-                type="reset"
-                onClick={formik.resetForm}
-              >
-                Reset
-              </Button>
-            </CardFooterLeft>
-            <CardFooterRight>
-              <Button
-                type="submit"
-                icon="Save"
-                color="primary"
-                isOutline
-                isDisable={!formik.isValid && !!formik.submitCount}
-              >
-                Save
-              </Button>
-            </CardFooterRight>
-          </CardFooter>
-        </Card>
-      </div>
-    </div>
+          </div>
+          <div className="col-12">
+            <FormGroup id="fieldOfStudy" label="Field of Study" isFloating>
+              <Input
+                placeholder="Field of Study"
+                autoComplete="fieldOfStudy"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.fieldOfStudy}
+                isValid={formik.isValid}
+                isTouched={formik.touched.fieldOfStudy}
+                invalidFeedback={formik.errors.fieldOfStudy}
+                validFeedback="Looks good!"
+              />
+            </FormGroup>
+          </div>
+          <div className="col-12">
+            <FormGroup className="col" id="exampleSizeTextareaLg">
+              <Textarea placeholder="Achievements" />
+            </FormGroup>
+          </div>
+        </div>
+      </CardBody>
+      <CardFooter>
+        <CardFooterLeft>
+          <Button color="danger" isLink onClick={formik.resetForm}>
+            Delete
+          </Button>
+        </CardFooterLeft>
+        <CardFooterRight>
+          <Button
+            type="submit"
+            icon="Save"
+            color="primary"
+            isOutline
+            isDisable={!formik.isValid && !!formik.submitCount}
+          >
+            Save
+          </Button>
+        </CardFooterRight>
+      </CardFooter>
+    </Card>
   )
 }
 

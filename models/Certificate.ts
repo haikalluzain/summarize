@@ -33,19 +33,19 @@ export const CertificateSchema = new Schema(
     },
     endYear: {
       type: Number,
-      required: true,
+      required: false,
     },
     endMonth: {
       type: String,
-      required: true,
+      required: false,
     },
     doesNotExpire: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     description: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   { timestamps: {} }

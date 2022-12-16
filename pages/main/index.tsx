@@ -3,6 +3,7 @@ import Card from 'components/bootstrap/Card'
 import AuthContext from 'contexts/authContext'
 import Page from 'layout/Page/Page'
 import PageWrapper from 'layout/PageWrapper/PageWrapper'
+import { ResumeModel } from 'models/Resume'
 import moment from 'moment'
 import type { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -11,6 +12,7 @@ import {
   buildStyles,
   CircularProgressbarWithChildren,
 } from 'react-circular-progressbar'
+import { IResume } from 'types/IResume'
 import nextMiddleware from 'utils/nextMiddleware'
 
 const dummy = [
@@ -34,17 +36,19 @@ const dummy = [
   },
 ]
 
-const Main: NextPage = () => {
+type Props = {
+  data: IResume[]
+}
+
+const Main: NextPage<Props> = ({ data }) => {
   const { push } = useRouter()
   const { user, setUser } = useContext(AuthContext)
 
   const handleNavigate = useCallback(() => push('/'), [push])
 
   useEffect(() => {
-    if (user) {
-      push('/')
-    }
-  }, [user])
+    console.log(data)
+  }, [])
 
   const goToLoginPage = () => {
     push('/')
@@ -67,8 +71,8 @@ const Main: NextPage = () => {
             </div>
           </div>
           <div className="row mt-5">
-            {dummy.map((cv) => (
-              <div className="col-lg-4" key={cv.id}>
+            {data.map((cv) => (
+              <div className="col-lg-4" key={cv._id}>
                 <div className="row">
                   <div className="col-6 px-4">
                     <Card
@@ -82,25 +86,27 @@ const Main: NextPage = () => {
                     <div className="flex-grow-1">
                       <div className="mb-3" style={{ width: 50, height: 50 }}>
                         <CircularProgressbarWithChildren
-                          value={cv.progress}
+                          value={20}
                           styles={buildStyles({
                             textSize: '25px',
                             textColor: '#4d69fa',
                             pathColor: '#4d69fa',
                           })}
                         >
-                          <strong>{`${cv.progress}%`}</strong>
+                          <strong>{`${20}%`}</strong>
                         </CircularProgressbarWithChildren>
                       </div>
-                      <p className="fs-5 fw-bold mb-1">{cv.name}</p>
-                      <p className="text-muted">{cv.createdAt}</p>
+                      <p className="fs-5 fw-bold mb-1">{cv.title}</p>
+                      <p className="text-muted">
+                        {moment(cv.createdAt).format('DD MMM YYYY HH:mm:ss')}
+                      </p>
                       <div className="row g-3">
                         <div className="col-12">
                           <Button
                             icon="Edit"
                             isLight
                             color="light"
-                            onClick={() => handeGoToDetail(cv.id)}
+                            onClick={() => handeGoToDetail(cv._id)}
                           >
                             Edit
                           </Button>
@@ -136,7 +142,17 @@ const Main: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   try {
     const { user } = await nextMiddleware(req, res)
-    return { props: { user: user, isLogin: !!user } }
+    let data = await ResumeModel.find({
+      user: user._id,
+      active: true,
+    }).exec()
+    return {
+      props: {
+        user: user,
+        isLogin: !!user,
+        data: JSON.parse(JSON.stringify(data)),
+      },
+    }
   } catch (e) {
     return { props: { user: null, isLogin: null } }
   }

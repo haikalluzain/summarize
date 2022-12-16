@@ -5,6 +5,7 @@ export interface IEducation {
   resume?: IResume
   institute: string
   degree: string
+  fieldOfStudy: string
   graduationYear: number
   graduationMonth: string
   description: string

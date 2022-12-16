@@ -17,11 +17,11 @@ export const SkillSchema = new Schema(
     },
     name: {
       type: String,
-      enum: ['beginner', 'intermediate', 'advanced', 'expert'],
       required: true,
     },
     rating: {
       type: String,
+      enum: ['beginner', 'intermediate', 'advanced', 'expert'],
       required: true,
     },
   },

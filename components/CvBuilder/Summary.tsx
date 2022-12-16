@@ -12,17 +12,20 @@ import FormGroup from 'components/bootstrap/forms/FormGroup'
 import Textarea from 'components/bootstrap/forms/Textarea'
 import { useFormik } from 'formik'
 import React from 'react'
+import { ISummary } from 'types/ISummary'
 import * as Yup from 'yup'
 
-const Summary: React.FC<{}> = () => {
+type SummaryProps = {
+  data: ISummary
+}
+
+const Summary: React.FC<SummaryProps> = ({ data }) => {
   const SummarySchema = Yup.object().shape({
     summary: Yup.string().required(),
   })
 
   const formik = useFormik({
-    initialValues: {
-      summary: '',
-    },
+    initialValues: { ...data },
     validationSchema: SummarySchema,
     onSubmit: () => {},
   })
@@ -41,14 +44,15 @@ const Summary: React.FC<{}> = () => {
               <div className="col-12">
                 <FormGroup id="summaryFormGroup">
                   <Textarea
+                    rows={6}
                     placeholder="Your Professional Summary"
                     autoComplete="summary"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.summary}
+                    value={formik.values.body}
                     isValid={formik.isValid}
-                    isTouched={formik.touched.summary}
-                    invalidFeedback={formik.errors.summary}
+                    isTouched={formik.touched.body}
+                    invalidFeedback={formik.errors.body}
                     validFeedback="Looks good!"
                   />
                 </FormGroup>

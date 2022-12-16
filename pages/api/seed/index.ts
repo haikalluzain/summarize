@@ -100,6 +100,7 @@ const resumeSeeder = async (user: IUser, isDefault: boolean = false) => {
   try {
     return await ResumeModel.create({
       user: user._id,
+      title: 'CV ' + user.name,
       active: true,
       default: isDefault,
     })
@@ -150,12 +151,14 @@ const educationSeeder = async (resume: IResume, payloads: IEducation[]) => {
 
 const skillSeeder = async (resume: IResume, payloads: ISkill[]) => {
   try {
-    return payloads.forEach(async (item) => {
+    payloads.forEach(async (item) => {
       await SkillModel.create({
         ...item,
+        rating: item.rating.toLowerCase(),
         resume,
       })
     })
+    return
   } catch (e) {
     console.log('[Skill Seeder Error] ', e)
   }
@@ -179,6 +182,7 @@ const languageSeeder = async (resume: IResume, payloads: ILanguage[]) => {
     return payloads.forEach(async (item) => {
       await LanguageModel.create({
         ...item,
+        rating: item.rating.toLowerCase(),
         resume,
       })
     })
@@ -223,6 +227,7 @@ const educations: IEducation[] = [
   {
     institute: 'Wikrama Vocational High School',
     degree: '',
+    fieldOfStudy: 'Software Engineer',
     graduationYear: 2019,
     graduationMonth: 'June',
     description: '',
@@ -230,6 +235,7 @@ const educations: IEducation[] = [
   {
     institute: 'Mercu Buana University',
     degree: 'Bachelor‘s Degree',
+    fieldOfStudy: 'Computer Science',
     graduationYear: 2023,
     graduationMonth: 'December',
     description: '',
@@ -308,6 +314,10 @@ const skills: ISkill[] = [
 ]
 
 const languages: ILanguage[] = [
+  {
+    name: 'Indonesia',
+    rating: 'Advanced',
+  },
   {
     name: 'English',
     rating: 'Intermediate',

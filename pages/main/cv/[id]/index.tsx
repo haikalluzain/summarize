@@ -15,8 +15,23 @@ import Skill from 'components/CvBuilder/Skill'
 import Summary from 'components/CvBuilder/Summary'
 import Page from 'layout/Page/Page'
 import PageWrapper from 'layout/PageWrapper/PageWrapper'
-import { NextPage } from 'next'
+import { CertificateModel } from 'models/Certificate'
+import { EducationModel } from 'models/Education'
+import { ExperienceModel } from 'models/Experience'
+import { LanguageModel } from 'models/Language'
+import { PersonalDetailModel } from 'models/PersonalDetail'
+import { SkillModel } from 'models/Skill'
+import { SummaryModel } from 'models/Summary'
+import { GetServerSideProps, NextPage } from 'next'
 import { useState } from 'react'
+import { ICertificate } from 'types/ICertificate'
+import { IEducation } from 'types/IEducation'
+import { IExperience } from 'types/IExperience'
+import { ILanguage } from 'types/ILanguage'
+import { IPersonalDetail } from 'types/IPersonalDetail'
+import { ISkill } from 'types/ISkill'
+import { ISummary } from 'types/ISummary'
+import nextMiddleware from 'utils/nextMiddleware'
 
 type TTabs =
   | 'Personal Details'
@@ -29,7 +44,26 @@ type TTabs =
 interface ITabs {
   [key: string]: TTabs
 }
-const CvEditPage: NextPage = () => {
+
+type Props = {
+  personalDetail: IPersonalDetail
+  experiences: IExperience[]
+  educations: IEducation[]
+  skills: ISkill[]
+  certificates: ICertificate[]
+  languages: ILanguage[]
+  summary: ISummary
+}
+
+const CvEditPage: NextPage<Props> = ({
+  personalDetail,
+  experiences,
+  educations,
+  skills,
+  certificates,
+  languages,
+  summary,
+}) => {
   const TABS: ITabs = {
     PERSONAL_DETAIL: 'Personal Details',
     EXPERIENCE: 'Experience',
@@ -151,13 +185,21 @@ const CvEditPage: NextPage = () => {
           <div className="col-xl-10 col-lg-9 col-md-7">
             <div className="row h-100 justify-content-center">
               <div className="col-xl-6 col-lg-9 col-md-12">
-                {TABS.PERSONAL_DETAIL === activeTab && <PersonalDetail />}
-                {TABS.EXPERIENCE === activeTab && <Experience />}
-                {TABS.EDUCATION === activeTab && <Education />}
-                {TABS.SKILL === activeTab && <Skill />}
-                {TABS.LANGUAGE === activeTab && <Language />}
-                {TABS.SUMMARY === activeTab && <Summary />}
-                {TABS.CERTIFICATE === activeTab && <Certificate />}
+                {TABS.PERSONAL_DETAIL === activeTab && (
+                  <PersonalDetail data={personalDetail} />
+                )}
+                {TABS.EXPERIENCE === activeTab && (
+                  <Experience data={experiences} />
+                )}
+                {TABS.EDUCATION === activeTab && (
+                  <Education data={educations} />
+                )}
+                {TABS.SKILL === activeTab && <Skill data={skills} />}
+                {TABS.LANGUAGE === activeTab && <Language data={languages} />}
+                {TABS.SUMMARY === activeTab && <Summary data={summary} />}
+                {TABS.CERTIFICATE === activeTab && (
+                  <Certificate data={certificates} />
+                )}
               </div>
             </div>
           </div>
@@ -165,6 +207,55 @@ const CvEditPage: NextPage = () => {
       </Page>
     </PageWrapper>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
+  query,
+}) => {
+  try {
+    const { user } = await nextMiddleware(req, res)
+    let resumeId = query.id
+    let personalDetail = await PersonalDetailModel.findOne({
+      resume: resumeId,
+    }).exec()
+
+    let experiences = await ExperienceModel.find({
+      resume: resumeId,
+    }).exec()
+    let educations = await EducationModel.find({
+      resume: resumeId,
+    }).exec()
+    let skills = await SkillModel.find({
+      resume: resumeId,
+    }).exec()
+    let certificates = await CertificateModel.find({
+      resume: resumeId,
+    }).exec()
+    let languages = await LanguageModel.find({
+      resume: resumeId,
+    }).exec()
+
+    let summary = await SummaryModel.findOne({
+      resume: resumeId,
+    }).exec()
+    return {
+      props: {
+        user: user,
+        isLogin: !!user,
+        personalDetail: JSON.parse(JSON.stringify(personalDetail)),
+        experiences: JSON.parse(JSON.stringify(experiences)),
+        educations: JSON.parse(JSON.stringify(educations)),
+        skills: JSON.parse(JSON.stringify(skills)),
+        certificates: JSON.parse(JSON.stringify(certificates)),
+        languages: JSON.parse(JSON.stringify(languages)),
+        summary: JSON.parse(JSON.stringify(summary)),
+      },
+    }
+  } catch (e) {
+    return { props: { user: null, isLogin: null } }
+  }
 }
 
 export default CvEditPage

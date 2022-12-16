@@ -13,9 +13,15 @@ import Card, {
 import FormGroup from 'components/bootstrap/forms/FormGroup'
 import Input from 'components/bootstrap/forms/Input'
 import { useFormik } from 'formik'
+import { IPersonalDetail } from 'types/IPersonalDetail'
+import { Api } from 'utils/api'
 import * as Yup from 'yup'
 
-const PersonalDetail: React.FC<{}> = () => {
+type PersonalDetailProps = {
+  data: IPersonalDetail
+}
+
+const PersonalDetail: React.FC<PersonalDetailProps> = ({ data }) => {
   const PersonalDetailSchema = Yup.object().shape({
     firstName: Yup.string().required(),
     lastName: Yup.string().nullable(),
@@ -26,19 +32,20 @@ const PersonalDetail: React.FC<{}> = () => {
   })
 
   const formik = useFormik({
-    initialValues: {
-      firstName: '',
-      lastName: '',
-      jobTitle: '',
-      phoneNumber: '',
-      email: '',
-      website: '',
-      city: '',
-      country: '',
-    },
+    initialValues: { ...data },
     validationSchema: PersonalDetailSchema,
-    onSubmit: () => {},
+    onSubmit: (values) => {
+      saveData(values)
+    },
   })
+
+  const saveData = async (payload: IPersonalDetail) => {
+    try {
+      const { data } = await Api().post('/user/personal-detail', payload)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="row">
@@ -109,7 +116,6 @@ const PersonalDetail: React.FC<{}> = () => {
                 <FormGroup id="jobTitle" label="Job Title" isFloating>
                   <Input
                     placeholder="Job Title"
-                    autoComplete="username"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.jobTitle}

@@ -15,6 +15,14 @@ export const ResumeSchema = new Schema(
       required: true,
       ref: 'User',
     },
+    title: {
+      type: String,
+      required: true,
+    },
+    progress: {
+      type: Number,
+      default: 0,
+    },
     active: {
       type: Boolean,
       default: true,
