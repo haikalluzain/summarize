@@ -23,6 +23,7 @@ import { PersonalDetailModel } from 'models/PersonalDetail'
 import { SkillModel } from 'models/Skill'
 import { SummaryModel } from 'models/Summary'
 import { GetServerSideProps, NextPage } from 'next'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { ICertificate } from 'types/ICertificate'
 import { IEducation } from 'types/IEducation'
@@ -74,6 +75,8 @@ const CvEditPage: NextPage<Props> = ({
     SUMMARY: 'Summary',
   }
   const [activeTab, setActiveTab] = useState<TTabs>(TABS.PERSONAL_DETAIL)
+  const { query } = useRouter()
+  const { id } = query
 
   return (
     <PageWrapper title={'Edit'}>
@@ -186,19 +189,25 @@ const CvEditPage: NextPage<Props> = ({
             <div className="row h-100 justify-content-center">
               <div className="col-xl-6 col-lg-9 col-md-12">
                 {TABS.PERSONAL_DETAIL === activeTab && (
-                  <PersonalDetail data={personalDetail} />
+                  <PersonalDetail resumeId={id as string} />
                 )}
                 {TABS.EXPERIENCE === activeTab && (
-                  <Experience data={experiences} />
+                  <Experience resumeId={id as string} />
                 )}
                 {TABS.EDUCATION === activeTab && (
-                  <Education data={educations} />
+                  <Education data={educations} resumeId={id as string} />
                 )}
-                {TABS.SKILL === activeTab && <Skill data={skills} />}
-                {TABS.LANGUAGE === activeTab && <Language data={languages} />}
-                {TABS.SUMMARY === activeTab && <Summary data={summary} />}
+                {TABS.SKILL === activeTab && (
+                  <Skill data={skills} resumeId={id as string} />
+                )}
+                {TABS.LANGUAGE === activeTab && (
+                  <Language data={languages} resumeId={id as string} />
+                )}
+                {TABS.SUMMARY === activeTab && (
+                  <Summary data={summary} resumeId={id as string} />
+                )}
                 {TABS.CERTIFICATE === activeTab && (
-                  <Certificate data={certificates} />
+                  <Certificate data={certificates} resumeId={id as string} />
                 )}
               </div>
             </div>

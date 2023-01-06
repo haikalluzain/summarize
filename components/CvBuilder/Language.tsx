@@ -46,9 +46,10 @@ const rating: SelectType[] = [
 
 type LanguageProps = {
   data: ILanguage[]
+  resumeId: string
 }
 
-const Language: React.FC<LanguageProps> = ({ data }) => {
+const Language: React.FC<LanguageProps> = ({ data, resumeId }) => {
   return (
     <div className="row">
       <div className="col-12">

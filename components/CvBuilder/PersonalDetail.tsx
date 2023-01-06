@@ -13,15 +13,19 @@ import Card, {
 import FormGroup from 'components/bootstrap/forms/FormGroup'
 import Input from 'components/bootstrap/forms/Input'
 import { useFormik } from 'formik'
+import { useEffect, useState } from 'react'
 import { IPersonalDetail } from 'types/IPersonalDetail'
 import { Api } from 'utils/api'
 import * as Yup from 'yup'
 
 type PersonalDetailProps = {
-  data: IPersonalDetail
+  resumeId: string
 }
 
-const PersonalDetail: React.FC<PersonalDetailProps> = ({ data }) => {
+const PersonalDetail: React.FC<PersonalDetailProps> = ({ resumeId }) => {
+  const [saved, setSaved] = useState(false)
+  const [personalDetail, setPersonalDetail] = useState<IPersonalDetail>(null)
+
   const PersonalDetailSchema = Yup.object().shape({
     firstName: Yup.string().required(),
     lastName: Yup.string().nullable(),
@@ -32,16 +36,53 @@ const PersonalDetail: React.FC<PersonalDetailProps> = ({ data }) => {
   })
 
   const formik = useFormik({
-    initialValues: { ...data },
+    enableReinitialize: true,
+    initialValues: { ...personalDetail },
     validationSchema: PersonalDetailSchema,
     onSubmit: (values) => {
-      saveData(values)
+      if (values._id) {
+        updateData(values)
+      } else {
+        saveData(values)
+      }
     },
   })
+
+  useEffect(() => {
+    getData(resumeId)
+  }, [])
+
+  const getData = async (resume: string) => {
+    try {
+      const {
+        data: { data },
+      } = await Api().get(`/user/${resume}/personal-detail`)
+      setPersonalDetail(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    setSaved(false)
+  }, [formik.values])
 
   const saveData = async (payload: IPersonalDetail) => {
     try {
       const { data } = await Api().post('/user/personal-detail', payload)
+      setSaved(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const updateData = async (payload: IPersonalDetail) => {
+    try {
+      const { data } = await Api().put(
+        `/user/personal-detail/${payload._id}`,
+        payload
+      )
+      setSaved(true)
     } catch (error) {
       console.log(error)
     }
@@ -218,15 +259,21 @@ const PersonalDetail: React.FC<PersonalDetailProps> = ({ data }) => {
               </Button>
             </CardFooterLeft>
             <CardFooterRight>
-              <Button
-                type="submit"
-                icon="Save"
-                color="primary"
-                isOutline
-                isDisable={!formik.isValid && !!formik.submitCount}
-              >
-                Save
-              </Button>
+              {!saved ? (
+                <Button
+                  type="submit"
+                  icon="Save"
+                  color="primary"
+                  isOutline
+                  isDisable={!formik.isValid && !!formik.submitCount}
+                >
+                  Save
+                </Button>
+              ) : (
+                <Button type="submit" icon="Check" color="success">
+                  Saved
+                </Button>
+              )}
             </CardFooterRight>
           </CardFooter>
         </Card>

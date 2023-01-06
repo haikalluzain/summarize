@@ -46,9 +46,10 @@ const rating: SelectType[] = [
 
 type SkillProps = {
   data: ISkill[]
+  resumeId: string
 }
 
-const Skill: React.FC<SkillProps> = ({ data }) => {
+const Skill: React.FC<SkillProps> = ({ data, resumeId }) => {
   return (
     <div className="row">
       <div className="col-12">

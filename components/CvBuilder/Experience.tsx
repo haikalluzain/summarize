@@ -18,6 +18,7 @@ import { useFormik } from 'formik'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { IExperience } from 'types/IExperience'
+import { Api } from 'utils/api'
 import * as Yup from 'yup'
 
 type SelectType = {
@@ -77,17 +78,86 @@ const months: SelectType[] = [
 ]
 
 type ExperienceProps = {
-  data: IExperience[]
+  resumeId: string
 }
 
-const Experience: React.FC<ExperienceProps> = ({ data }) => {
+const initialExperience: IExperience = {
+  jobTitle: '',
+  company: '',
+  startYear: moment().year(),
+  startMonth: 'January',
+  endYear: moment().year(),
+  endMonth: 'January',
+  current: false,
+  description: '',
+}
+
+const Experience: React.FC<ExperienceProps> = ({ resumeId }) => {
+  const [experiences, setExperiences] = useState<IExperience[]>(null)
+
+  const onAddNew = () => {
+    let newArr = [...experiences]
+    newArr.push({ ...initialExperience, resume: resumeId })
+    setExperiences(newArr)
+  }
+
+  useEffect(() => {
+    getData(resumeId)
+  }, [])
+
+  const getData = async (resume: string) => {
+    try {
+      const {
+        data: { data },
+      } = await Api().get(`/user/${resume}/experience`)
+      setExperiences(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const deleteData = async (index: number) => {
+    try {
+      console.log(index)
+      let newArr = [...experiences]
+      const exp = { ...newArr[index] }
+      newArr = newArr.splice(index, 1)
+      setExperiences(newArr)
+      if (exp._id) {
+        const { data } = await Api().delete(`/user/experience/${exp._id}`)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className="row">
       <div className="col-12">
-        {data &&
-          data.map((experience, index) => (
-            <Item experience={experience} firstIndex={index === 0} />
+        {experiences &&
+          experiences.map((experience, index) => (
+            <Item
+              experience={experience}
+              firstIndex={index === 0}
+              onDelete={() => deleteData(index)}
+            />
           ))}
+      </div>
+      <div className="col-12">
+        <Card>
+          <CardBody className="d-flex align-items-center justify-content-center">
+            <Button
+              color="primary"
+              size="lg"
+              isLight
+              className="w-100 h-100 py-4"
+              icon="AddCircle"
+              onClick={onAddNew}
+            >
+              Add New
+            </Button>
+          </CardBody>
+        </Card>
       </div>
     </div>
   )
@@ -96,10 +166,16 @@ const Experience: React.FC<ExperienceProps> = ({ data }) => {
 type ExperienceItemProps = {
   experience: IExperience
   firstIndex: boolean
+  onDelete: () => void
 }
 
-const Item: React.FC<ExperienceItemProps> = ({ experience, firstIndex }) => {
+const Item: React.FC<ExperienceItemProps> = ({
+  experience,
+  firstIndex,
+  onDelete,
+}) => {
   const [years, setYears] = useState<SelectType[]>([])
+  const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     let yearList: SelectType[] = []
@@ -117,13 +193,56 @@ const Item: React.FC<ExperienceItemProps> = ({ experience, firstIndex }) => {
     company: Yup.string().required(),
     startMonth: Yup.string().required(),
     startYear: Yup.string().required(),
+    current: Yup.boolean().required(),
+    endMonth: Yup.string().when('current', {
+      is: false,
+      then: Yup.string().required(),
+      otherwise: Yup.string().nullable(),
+    }),
+    endYear: Yup.string().when('current', {
+      is: false,
+      then: Yup.string().required(),
+      otherwise: Yup.string().nullable(),
+    }),
   })
 
   const formik = useFormik({
     initialValues: { ...experience },
     validationSchema: ExperienceSchema,
-    onSubmit: () => {},
+    onSubmit: (values) => {
+      if (values._id) {
+        updateData(values)
+      } else {
+        saveData(values)
+      }
+    },
   })
+
+  useEffect(() => {
+    setSaved(false)
+  }, [formik.values])
+
+  const saveData = async (payload: IExperience) => {
+    try {
+      const { data } = await Api().post('/user/experience', payload)
+      setSaved(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const updateData = async (payload: IExperience) => {
+    try {
+      const { data } = await Api().put(
+        `/user/experience/${payload._id}`,
+        payload
+      )
+      setSaved(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <Card tag="form" noValidate onSubmit={formik.handleSubmit}>
       {firstIndex && (
@@ -139,14 +258,13 @@ const Item: React.FC<ExperienceItemProps> = ({ experience, firstIndex }) => {
             <FormGroup id="jobTitle" label="Job Title" isFloating>
               <Input
                 placeholder="Job Title"
-                autoComplete="username"
+                autoComplete="job_title"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.jobTitle}
                 isValid={formik.isValid}
+                value={formik.values.jobTitle}
                 isTouched={formik.touched.jobTitle}
                 invalidFeedback={formik.errors.jobTitle}
-                validFeedback="Looks good!"
               />
             </FormGroup>
           </div>
@@ -157,11 +275,10 @@ const Item: React.FC<ExperienceItemProps> = ({ experience, firstIndex }) => {
                 autoComplete="company"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.company}
                 isValid={formik.isValid}
+                value={formik.values.company}
                 isTouched={formik.touched.company}
                 invalidFeedback={formik.errors.company}
-                validFeedback="Looks good!"
               />
             </FormGroup>
           </div>
@@ -178,11 +295,10 @@ const Item: React.FC<ExperienceItemProps> = ({ experience, firstIndex }) => {
                         list={months}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        value={formik.values.startMonth}
                         isValid={formik.isValid}
+                        value={formik.values.startMonth}
                         isTouched={formik.touched.startMonth}
                         invalidFeedback={formik.errors.startMonth}
-                        validFeedback="Looks good!"
                       />
                     </FormGroup>
                   </div>
@@ -194,11 +310,10 @@ const Item: React.FC<ExperienceItemProps> = ({ experience, firstIndex }) => {
                         list={years}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        value={formik.values.startYear.toString()}
                         isValid={formik.isValid}
+                        value={formik.values.startYear.toString()}
                         isTouched={formik.touched.startYear}
                         invalidFeedback={formik.errors.startYear}
-                        validFeedback="Looks good!"
                       />
                     </FormGroup>
                   </div>
@@ -207,45 +322,48 @@ const Item: React.FC<ExperienceItemProps> = ({ experience, firstIndex }) => {
               <div className="col-6">
                 <Label className="fw-bold">End</Label>
                 <div className="row">
-                  <div className="col-md-6">
-                    <FormGroup id="endMonth" label="Month" isFloating>
-                      <Select
-                        ariaLabel="endMonth"
-                        placeholder="Month"
-                        list={months}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.endMonth}
-                        isValid={formik.isValid}
-                        isTouched={formik.touched.endMonth}
-                        invalidFeedback={formik.errors.endMonth}
-                        validFeedback="Looks good!"
-                      />
-                    </FormGroup>
-                  </div>
-                  <div className="col-md-6">
-                    <FormGroup id="endYear" label="Year" isFloating>
-                      <Select
-                        ariaLabel="endYear"
-                        placeholder="Year"
-                        list={years}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.endYear?.toString()}
-                        isValid={formik.isValid}
-                        isTouched={formik.touched.endYear}
-                        invalidFeedback={formik.errors.endYear}
-                        validFeedback="Looks good!"
-                      />
-                    </FormGroup>
-                  </div>
+                  {!formik.values.current ? (
+                    <>
+                      <div className="col-md-6">
+                        <FormGroup id="endMonth" label="Month" isFloating>
+                          <Select
+                            ariaLabel="endMonth"
+                            placeholder="Month"
+                            list={months}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            isValid={formik.isValid}
+                            value={formik.values.endMonth}
+                            isTouched={formik.touched.endMonth}
+                            invalidFeedback={formik.errors.endMonth}
+                          />
+                        </FormGroup>
+                      </div>
+                      <div className="col-md-6">
+                        <FormGroup id="endYear" label="Year" isFloating>
+                          <Select
+                            ariaLabel="endYear"
+                            placeholder="Year"
+                            list={years}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            isValid={formik.isValid}
+                            value={formik.values.endYear?.toString()}
+                            isTouched={formik.touched.endYear}
+                            invalidFeedback={formik.errors.endYear}
+                          />
+                        </FormGroup>
+                      </div>
+                    </>
+                  ) : null}
                   <div className="col-12 mt-3">
                     <Checks
+                      name="current"
                       type="checkbox"
                       id="currentlyWorkHere"
                       label="Currently work here"
-                      // onChange={exampleInline.handleChange}
-                      // checked={exampleInline.values.exampleInlineOne}
+                      onChange={formik.handleChange}
+                      checked={formik.values.current}
                       isInline
                     />
                   </div>
@@ -254,28 +372,41 @@ const Item: React.FC<ExperienceItemProps> = ({ experience, firstIndex }) => {
             </div>
           </div>
           <div className="col-12">
-            <FormGroup className="col" id="exampleSizeTextareaLg">
-              <Textarea placeholder="Accomplishment" />
+            <FormGroup className="col" id="description">
+              <Textarea
+                placeholder="Accomplishment"
+                onChange={formik.handleChange}
+                value={formik.values.description || ''}
+                isTouched={formik.touched.description}
+                invalidFeedback={formik.errors.description}
+                isValid={formik.isValid}
+              />
             </FormGroup>
           </div>
         </div>
       </CardBody>
       <CardFooter>
         <CardFooterLeft>
-          <Button color="danger" isLink onClick={formik.resetForm}>
+          <Button color="danger" isLink onClick={onDelete}>
             Delete
           </Button>
         </CardFooterLeft>
         <CardFooterRight>
-          <Button
-            type="submit"
-            icon="Save"
-            color="primary"
-            isOutline
-            isDisable={!formik.isValid && !!formik.submitCount}
-          >
-            Save
-          </Button>
+          {!saved ? (
+            <Button
+              type="submit"
+              icon="Save"
+              color="primary"
+              isOutline
+              isDisable={!formik.isValid && !!formik.submitCount}
+            >
+              Save
+            </Button>
+          ) : (
+            <Button type="submit" icon="Check" color="success">
+              Saved
+            </Button>
+          )}
         </CardFooterRight>
       </CardFooter>
     </Card>

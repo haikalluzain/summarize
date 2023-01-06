@@ -77,9 +77,10 @@ const months: SelectType[] = [
 
 type CertificateProps = {
   data: ICertificate[]
+  resumeId: string
 }
 
-const Certificate: React.FC<CertificateProps> = ({ data }) => {
+const Certificate: React.FC<CertificateProps> = ({ data, resumeId }) => {
   return (
     <div className="row">
       <div className="col-12">

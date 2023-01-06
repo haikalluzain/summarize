@@ -32,7 +32,7 @@ export default async function handler(
     await nextMiddleware(req, res)
 
     if (req.method === 'GET') {
-      // return getTaskList(req as PersonalDetailListApiRequest, res)
+      // return getPersonalDetail(req as PersonalDetailListApiRequest, res)
     } else if (req.method === 'POST') {
       return createPersonalDetail(req, res)
     }
@@ -65,6 +65,7 @@ const createPersonalDetail = async (
   }
 
   const {
+    resume,
     firstName,
     lastName,
     jobTitle,
@@ -75,7 +76,8 @@ const createPersonalDetail = async (
     city,
   } = req.body
 
-  const task = await PersonalDetailModel.create({
+  const personal = await PersonalDetailModel.create({
+    resume,
     firstName,
     lastName,
     jobTitle,
@@ -86,5 +88,9 @@ const createPersonalDetail = async (
     city,
   })
 
-  return successResponse(res, 'Successfully created the personal details', task)
+  return successResponse(
+    res,
+    'Successfully created the personal details',
+    personal
+  )
 }

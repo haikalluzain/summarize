@@ -17,9 +17,10 @@ import * as Yup from 'yup'
 
 type SummaryProps = {
   data: ISummary
+  resumeId: string
 }
 
-const Summary: React.FC<SummaryProps> = ({ data }) => {
+const Summary: React.FC<SummaryProps> = ({ data, resumeId }) => {
   const SummarySchema = Yup.object().shape({
     summary: Yup.string().required(),
   })

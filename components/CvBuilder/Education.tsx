@@ -77,9 +77,10 @@ const months: SelectType[] = [
 
 type EducationProps = {
   data: IEducation[]
+  resumeId: string
 }
 
-const Education: React.FC<EducationProps> = ({ data }) => {
+const Education: React.FC<EducationProps> = ({ data, resumeId }) => {
   return (
     <div className="row">
       <div className="col-12">
