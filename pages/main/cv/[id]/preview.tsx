@@ -10,32 +10,34 @@ import Select from 'components/bootstrap/forms/Select'
 import Sheet from 'components/Preview/Sheet'
 import Page from 'layout/Page/Page'
 import PageWrapper from 'layout/PageWrapper/PageWrapper'
-import { NextPage } from 'next'
-import { useState } from 'react'
+import { CertificateModel } from 'models/Certificate'
+import { EducationModel } from 'models/Education'
+import { ExperienceModel } from 'models/Experience'
+import { LanguageModel } from 'models/Language'
+import { PersonalDetailModel } from 'models/PersonalDetail'
+import { SkillModel } from 'models/Skill'
+import { SummaryModel } from 'models/Summary'
+import { GetServerSideProps, NextPage } from 'next'
+import { ICertificate } from 'types/ICertificate'
+import { IEducation } from 'types/IEducation'
+import { IExperience } from 'types/IExperience'
+import { ILanguage } from 'types/ILanguage'
+import { IPersonalDetail } from 'types/IPersonalDetail'
+import { ISkill } from 'types/ISkill'
+import { ISummary } from 'types/ISummary'
+import nextMiddleware from 'utils/nextMiddleware'
 
-type TTabs =
-  | 'Personal Details'
-  | 'Experience'
-  | 'Education'
-  | 'Skills'
-  | 'Certificates'
-  | 'Language'
-  | 'Summary'
-interface ITabs {
-  [key: string]: TTabs
+type Props = {
+  personalDetail: IPersonalDetail
+  experiences: IExperience[]
+  educations: IEducation[]
+  skills: ISkill[]
+  certificates: ICertificate[]
+  languages: ILanguage[]
+  summary: ISummary
 }
-const CvPreviewPage: NextPage = () => {
-  const TABS: ITabs = {
-    PERSONAL_DETAIL: 'Personal Details',
-    EXPERIENCE: 'Experience',
-    EDUCATION: 'Education',
-    SKILL: 'Skills',
-    CERTIFICATE: 'Certificates',
-    LANGUAGE: 'Language',
-    SUMMARY: 'Summary',
-  }
-  const [activeTab, setActiveTab] = useState<TTabs>(TABS.PERSONAL_DETAIL)
 
+const CvPreviewPage: NextPage<Props> = (props) => {
   return (
     <PageWrapper title={'Edit'}>
       <Page container="fluid">
@@ -143,7 +145,7 @@ const CvPreviewPage: NextPage = () => {
           <div className="col-xl-10 col-lg-9 col-md-7">
             <div className="row h-100 justify-content-center">
               <div className="col-xl-8 col-lg-11 col-md-12">
-                <Sheet />
+                <Sheet data={props} />
               </div>
             </div>
           </div>
@@ -151,6 +153,57 @@ const CvPreviewPage: NextPage = () => {
       </Page>
     </PageWrapper>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
+  query,
+}) => {
+  try {
+    const { user } = await nextMiddleware(req, res)
+    let resumeId = query.id
+    let personalDetail = await PersonalDetailModel.findOne({
+      resume: resumeId,
+    }).exec()
+
+    let experiences = await ExperienceModel.find({
+      resume: resumeId,
+    }).exec()
+    let educations = await EducationModel.find({
+      resume: resumeId,
+    }).exec()
+    let skills = await SkillModel.find({
+      resume: resumeId,
+    })
+      .sort({ date: 'asc' })
+      .exec()
+    let certificates = await CertificateModel.find({
+      resume: resumeId,
+    }).exec()
+    let languages = await LanguageModel.find({
+      resume: resumeId,
+    }).exec()
+
+    let summary = await SummaryModel.findOne({
+      resume: resumeId,
+    }).exec()
+    return {
+      props: {
+        user: user,
+        isLogin: !!user,
+        personalDetail: JSON.parse(JSON.stringify(personalDetail)),
+        experiences: JSON.parse(JSON.stringify(experiences)),
+        educations: JSON.parse(JSON.stringify(educations)),
+        skills: JSON.parse(JSON.stringify(skills)),
+        certificates: JSON.parse(JSON.stringify(certificates)),
+        languages: JSON.parse(JSON.stringify(languages)),
+        summary: JSON.parse(JSON.stringify(summary)),
+      },
+    }
+  } catch (e) {
+    return { props: { user: null, isLogin: null } }
+  }
 }
 
 export default CvPreviewPage
