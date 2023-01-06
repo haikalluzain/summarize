@@ -1,3 +1,4 @@
+import { Client } from '@elastic/elasticsearch'
 import { UserModel } from 'models/User'
 import mongoose from 'mongoose'
 import { NextApiResponse } from 'next'
@@ -58,6 +59,228 @@ export default async function handler(
       await languageSeeder(resume1, languages)
       await summarySeeder(resume1, summaryUser1)
 
+      const client = new Client({
+        node: 'http://localhost:9200',
+        // cloud: {
+        //   id: process.env.ELASTIC_CLOUD_ID,
+        // },
+        // auth: {
+        //   apiKey: process.env.ELASTIC_API_KEY,
+        // },
+      })
+
+      // await client.indices.delete({
+      //   index: 'candidates',
+      // })
+
+      // await client.indices.create({
+      //   index: 'candidates',
+      //   mappings: {
+      //     properties: {
+      //       certificates: {
+      //         type: 'nested',
+      //         properties: {
+      //           name: {
+      //             type: 'text',
+      //             fields: {
+      //               keyword: {
+      //                 type: 'keyword',
+      //                 ignore_above: 256,
+      //               },
+      //             },
+      //           },
+      //           organization: {
+      //             type: 'text',
+      //             fields: {
+      //               keyword: {
+      //                 type: 'keyword',
+      //                 ignore_above: 256,
+      //               },
+      //             },
+      //           },
+      //         },
+      //       },
+      //       city: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 256,
+      //           },
+      //         },
+      //       },
+      //       country: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 256,
+      //           },
+      //         },
+      //       },
+      //       created_at: {
+      //         type: 'date',
+      //       },
+      //       email: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 256,
+      //           },
+      //         },
+      //       },
+      //       experiences: {
+      //         type: 'nested',
+      //         properties: {
+      //           description: {
+      //             type: 'text',
+      //             fields: {
+      //               keyword: {
+      //                 type: 'keyword',
+      //                 ignore_above: 512,
+      //               },
+      //             },
+      //           },
+      //           job_title: {
+      //             type: 'text',
+      //             fields: {
+      //               keyword: {
+      //                 type: 'keyword',
+      //                 ignore_above: 256,
+      //               },
+      //             },
+      //           },
+      //           total_years: {
+      //             type: 'long',
+      //           },
+      //         },
+      //       },
+      //       full_name: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 256,
+      //           },
+      //         },
+      //       },
+      //       has_degree: {
+      //         type: 'boolean',
+      //       },
+      //       id: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 256,
+      //           },
+      //         },
+      //       },
+      //       img_url: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 256,
+      //           },
+      //         },
+      //       },
+      //       job_title: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 256,
+      //           },
+      //         },
+      //       },
+      //       phone_number: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 256,
+      //           },
+      //         },
+      //       },
+      //       skills: {
+      //         type: 'nested',
+      //         properties: {
+      //           name: {
+      //             type: 'text',
+      //             fields: {
+      //               keyword: {
+      //                 type: 'keyword',
+      //                 ignore_above: 256,
+      //               },
+      //             },
+      //           },
+      //           rating: {
+      //             type: 'text',
+      //             fields: {
+      //               keyword: {
+      //                 type: 'keyword',
+      //                 ignore_above: 256,
+      //               },
+      //             },
+      //           },
+      //         },
+      //       },
+      //       summaries: {
+      //         type: 'text',
+      //         fields: {
+      //           keyword: {
+      //             type: 'keyword',
+      //             ignore_above: 512,
+      //           },
+      //         },
+      //       },
+      //       updated_at: {
+      //         type: 'date',
+      //       },
+      //     },
+      //   },
+      // })
+
+      await client.deleteByQuery({
+        index: 'candidates',
+        body: {
+          query: {
+            match_all: {},
+          },
+        },
+      })
+
+      const document = {
+        full_name: `${personalDetailUser1.firstName} ${personalDetailUser1.lastName}`,
+        job_title: personalDetailUser1.jobTitle,
+        email: personalDetailUser1.email,
+        phone_number: personalDetailUser1.phoneNumber,
+        country: personalDetailUser1.country,
+        city: personalDetailUser1.city,
+        summaries: summaryUser1.body,
+        skills: skills,
+        experiences: experiencesUser1.map((experience) => ({
+          job_title: experience.jobTitle,
+          total_years: 4,
+          description: experience.description,
+        })),
+        certificates: certificates.map((cer) => ({
+          name: cer.name,
+          organization: cer.organization,
+        })),
+        has_degree: false,
+        created_at: resume1.createdAt,
+        updated_at: resume1.updatedAt,
+      }
+
+      await client.index({
+        index: 'candidates',
+        id: resume1._id,
+        body: document,
+      })
+
       // USER 2
       const user2 = await userSeeder({
         name: 'Zhafari Irsyad',
@@ -72,6 +295,36 @@ export default async function handler(
       await certificateSeeder(resume2, certificates)
       await languageSeeder(resume2, languages)
       await summarySeeder(resume2, summaryUser2)
+
+      const document2 = {
+        id: resume2._id,
+        full_name: `${personalDetailUser2.firstName} ${personalDetailUser2.lastName}`,
+        job_title: personalDetailUser2.jobTitle,
+        email: personalDetailUser2.email,
+        phone_number: personalDetailUser2.phoneNumber,
+        country: personalDetailUser2.country,
+        city: personalDetailUser2.city,
+        summaries: summaryUser2.body,
+        skills: skills,
+        experiences: experiencesUser2.map((experience) => ({
+          job_title: experience.jobTitle,
+          total_years: 4,
+          description: experience.description,
+        })),
+        certificates: certificates.map((cer) => ({
+          name: cer.name,
+          organization: cer.organization,
+        })),
+        has_degree: false,
+        created_at: resume2.createdAt,
+        updated_at: resume2.updatedAt,
+      }
+
+      await client.index({
+        index: 'candidates',
+        id: resume2._id,
+        body: document2,
+      })
 
       return successResponse(res, 'Data seeding successfully')
     }

@@ -1,3 +1,4 @@
+import { Client } from '@elastic/elasticsearch'
 import { NextApiResponse } from 'next'
 import nextMiddleware, { NextApiRequestWithSession } from 'utils/nextMiddleware'
 import {
@@ -49,6 +50,7 @@ export default async function handler(
         website,
         country,
         city,
+        resume,
       } = req.body
 
       personal.firstName = firstName
@@ -60,6 +62,25 @@ export default async function handler(
       personal.country = country
       personal.city = city
       await personal.save()
+
+      const doc = {
+        full_name: `${firstName} ${lastName}`,
+        job_title: jobTitle,
+        email,
+        phone_number: phoneNumber,
+        country,
+        city,
+      }
+
+      const client = new Client({
+        node: 'http://localhost:9200',
+      })
+
+      client.update({
+        index: 'candidates',
+        id: resume,
+        body: { doc },
+      })
 
       return successResponse(
         res,

@@ -282,7 +282,7 @@ const KnowledgeGridPage: NextPage<Props> = ({
           </div>
         </div>
         <div className="row mb-5">
-          {candidate.data.map((item) => (
+          {candidate?.data.map((item) => (
             <div key={item._id} className="col-xl-6 col-lg-12 col-md-12">
               {/* eslint-disable-next-line react/jsx-props-no-spreading */}
               <Item {...item} />
