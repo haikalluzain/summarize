@@ -22,13 +22,13 @@ export default async function handler(
       const education = await EducationModel.findById(id)
 
       if (!education) {
-        return responseNotFound(res, 'Task is not found')
+        return responseNotFound(res, 'Education is not found')
       }
 
       try {
         await validate(req, {
           institute: Yup.string().required(),
-          degree: Yup.string().required(),
+          degree: Yup.string().nullable(),
           fieldOfStudy: Yup.string().required(),
           graduationMonth: Yup.string().required(),
           graduationYear: Yup.string().required(),

@@ -195,11 +195,9 @@ const CvEditPage: NextPage<Props> = ({
                   <Experience resumeId={id as string} />
                 )}
                 {TABS.EDUCATION === activeTab && (
-                  <Education data={educations} resumeId={id as string} />
+                  <Education resumeId={id as string} />
                 )}
-                {TABS.SKILL === activeTab && (
-                  <Skill data={skills} resumeId={id as string} />
-                )}
+                {TABS.SKILL === activeTab && <Skill resumeId={id as string} />}
                 {TABS.LANGUAGE === activeTab && (
                   <Language data={languages} resumeId={id as string} />
                 )}
@@ -207,7 +205,7 @@ const CvEditPage: NextPage<Props> = ({
                   <Summary data={summary} resumeId={id as string} />
                 )}
                 {TABS.CERTIFICATE === activeTab && (
-                  <Certificate data={certificates} resumeId={id as string} />
+                  <Certificate resumeId={id as string} />
                 )}
               </div>
             </div>

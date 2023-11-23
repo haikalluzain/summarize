@@ -2,7 +2,7 @@ import { IResume } from './IResume'
 
 export interface IEducation {
   _id?: string
-  resume?: IResume
+  resume?: IResume | string
   institute: string
   degree: string
   fieldOfStudy: string

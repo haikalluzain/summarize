@@ -1,4 +1,3 @@
-import { Client } from '@elastic/elasticsearch'
 import { UserModel } from 'models/User'
 import mongoose from 'mongoose'
 import { NextApiResponse } from 'next'
@@ -59,15 +58,15 @@ export default async function handler(
       await languageSeeder(resume1, languages)
       await summarySeeder(resume1, summaryUser1)
 
-      const client = new Client({
-        node: 'http://localhost:9200',
-        // cloud: {
-        //   id: process.env.ELASTIC_CLOUD_ID,
-        // },
-        // auth: {
-        //   apiKey: process.env.ELASTIC_API_KEY,
-        // },
-      })
+      // const client = new Client({
+      //   node: 'http://localhost:9200',
+      // cloud: {
+      //   id: process.env.ELASTIC_CLOUD_ID,
+      // },
+      // auth: {
+      //   apiKey: process.env.ELASTIC_API_KEY,
+      // },
+      // })
 
       // await client.indices.delete({
       //   index: 'candidates',
@@ -243,14 +242,14 @@ export default async function handler(
       //   },
       // })
 
-      await client.deleteByQuery({
-        index: 'candidates',
-        body: {
-          query: {
-            match_all: {},
-          },
-        },
-      })
+      // await client.deleteByQuery({
+      //   index: 'candidates',
+      //   body: {
+      //     query: {
+      //       match_all: {},
+      //     },
+      //   },
+      // })
 
       const document = {
         full_name: `${personalDetailUser1.firstName} ${personalDetailUser1.lastName}`,
@@ -275,11 +274,11 @@ export default async function handler(
         updated_at: resume1.updatedAt,
       }
 
-      await client.index({
-        index: 'candidates',
-        id: resume1._id,
-        body: document,
-      })
+      // await client.index({
+      //   index: 'candidates',
+      //   id: resume1._id,
+      //   body: document,
+      // })
 
       // USER 2
       const user2 = await userSeeder({
@@ -320,11 +319,11 @@ export default async function handler(
         updated_at: resume2.updatedAt,
       }
 
-      await client.index({
-        index: 'candidates',
-        id: resume2._id,
-        body: document2,
-      })
+      // await client.index({
+      //   index: 'candidates',
+      //   id: resume2._id,
+      //   body: document2,
+      // })
 
       return successResponse(res, 'Data seeding successfully')
     }

@@ -12,8 +12,9 @@ import FormGroup from 'components/bootstrap/forms/FormGroup'
 import Input from 'components/bootstrap/forms/Input'
 import Select from 'components/bootstrap/forms/Select'
 import { useFormik } from 'formik'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ISkill } from 'types/ISkill'
+import { Api } from 'utils/api'
 import * as Yup from 'yup'
 
 type SelectType = {
@@ -45,18 +46,79 @@ const rating: SelectType[] = [
 ]
 
 type SkillProps = {
-  data: ISkill[]
   resumeId: string
 }
 
-const Skill: React.FC<SkillProps> = ({ data, resumeId }) => {
+const initialSkill: ISkill = {
+  name: '',
+  rating: '',
+}
+
+const Skill: React.FC<SkillProps> = ({ resumeId }) => {
+  const [skills, setSkills] = useState<ISkill[]>(null)
+
+  const onAddNew = () => {
+    let newArr = [...skills]
+    newArr.push({ ...initialSkill, resume: resumeId })
+    setSkills(newArr)
+  }
+
+  useEffect(() => {
+    getData(resumeId)
+  }, [])
+
+  const getData = async (resume: string) => {
+    try {
+      const {
+        data: { data },
+      } = await Api().get(`/user/${resume}/skill`)
+      setSkills(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const deleteData = async (index: number) => {
+    try {
+      let newArr = [...skills]
+      const exp = { ...newArr[index] }
+      newArr.splice(index, 1)
+      setSkills(newArr)
+      if (exp._id) {
+        const { data } = await Api().delete(`/user/skill/${exp._id}`)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className="row">
       <div className="col-12">
-        {data &&
-          data.map((skill, index) => (
-            <Item skill={skill} firstIndex={index === 0} />
+        {skills &&
+          skills.map((skill, index) => (
+            <Item
+              skill={skill}
+              firstIndex={index === 0}
+              onDelete={() => deleteData(index)}
+            />
           ))}
+      </div>
+      <div className="col-12">
+        <Card>
+          <CardBody className="d-flex align-items-center justify-content-center">
+            <Button
+              color="primary"
+              size="lg"
+              isLight
+              className="w-100 h-100 py-4"
+              icon="AddCircle"
+              onClick={onAddNew}
+            >
+              Add New
+            </Button>
+          </CardBody>
+        </Card>
       </div>
     </div>
   )
@@ -65,9 +127,12 @@ const Skill: React.FC<SkillProps> = ({ data, resumeId }) => {
 type SkillItemProps = {
   skill: ISkill
   firstIndex: boolean
+  onDelete: () => void
 }
 
-const Item: React.FC<SkillItemProps> = ({ skill, firstIndex }) => {
+const Item: React.FC<SkillItemProps> = ({ skill, firstIndex, onDelete }) => {
+  const [saved, setSaved] = useState(false)
+
   const SkillSchema = Yup.object().shape({
     name: Yup.string().required(),
     rating: Yup.string().nullable(),
@@ -76,8 +141,37 @@ const Item: React.FC<SkillItemProps> = ({ skill, firstIndex }) => {
   const formik = useFormik({
     initialValues: { ...skill },
     validationSchema: SkillSchema,
-    onSubmit: () => {},
+    onSubmit: (values) => {
+      if (values._id) {
+        updateData(values)
+      } else {
+        saveData(values)
+      }
+    },
   })
+
+  useEffect(() => {
+    setSaved(false)
+  }, [formik.values])
+
+  const saveData = async (payload: ISkill) => {
+    try {
+      const { data } = await Api().post('/user/skill', payload)
+      setSaved(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const updateData = async (payload: ISkill) => {
+    try {
+      const { data } = await Api().put(`/user/skill/${payload._id}`, payload)
+      setSaved(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <Card tag="form" noValidate onSubmit={formik.handleSubmit}>
       {firstIndex && (
@@ -124,20 +218,26 @@ const Item: React.FC<SkillItemProps> = ({ skill, firstIndex }) => {
       </CardBody>
       <CardFooter>
         <CardFooterLeft>
-          <Button color="danger" isLink type="reset" onClick={formik.resetForm}>
+          <Button color="danger" isLink type="reset" onClick={onDelete}>
             Delete
           </Button>
         </CardFooterLeft>
         <CardFooterRight>
-          <Button
-            type="submit"
-            icon="Save"
-            color="primary"
-            isOutline
-            isDisable={!formik.isValid && !!formik.submitCount}
-          >
-            Save
-          </Button>
+          {!saved ? (
+            <Button
+              type="submit"
+              icon="Save"
+              color="primary"
+              isOutline
+              isDisable={!formik.isValid && !!formik.submitCount}
+            >
+              Save
+            </Button>
+          ) : (
+            <Button type="submit" icon="Check" color="success">
+              Saved
+            </Button>
+          )}
         </CardFooterRight>
       </CardFooter>
     </Card>

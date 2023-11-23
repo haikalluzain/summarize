@@ -118,10 +118,9 @@ const Experience: React.FC<ExperienceProps> = ({ resumeId }) => {
 
   const deleteData = async (index: number) => {
     try {
-      console.log(index)
       let newArr = [...experiences]
       const exp = { ...newArr[index] }
-      newArr = newArr.splice(index, 1)
+      newArr.splice(index, 1)
       setExperiences(newArr)
       if (exp._id) {
         const { data } = await Api().delete(`/user/experience/${exp._id}`)

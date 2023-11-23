@@ -17,6 +17,7 @@ import { useFormik } from 'formik'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { ICertificate } from 'types/ICertificate'
+import { Api } from 'utils/api'
 import * as Yup from 'yup'
 
 type SelectType = {
@@ -76,18 +77,85 @@ const months: SelectType[] = [
 ]
 
 type CertificateProps = {
-  data: ICertificate[]
   resumeId: string
 }
 
-const Certificate: React.FC<CertificateProps> = ({ data, resumeId }) => {
+const initialCertificate: ICertificate = {
+  name: '',
+  organization: '',
+  startYear: moment().year(),
+  startMonth: 'January',
+  endYear: moment().year(),
+  endMonth: 'January',
+  doesNotExpire: false,
+  description: '',
+}
+
+const Certificate: React.FC<CertificateProps> = ({ resumeId }) => {
+  const [certificates, setCertificates] = useState<ICertificate[]>(null)
+
+  const onAddNew = () => {
+    let newArr = [...certificates]
+    newArr.push({ ...initialCertificate, resume: resumeId })
+    setCertificates(newArr)
+  }
+
+  useEffect(() => {
+    getData(resumeId)
+  }, [])
+
+  const getData = async (resume: string) => {
+    try {
+      const {
+        data: { data },
+      } = await Api().get(`/user/${resume}/certificate`)
+      setCertificates(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const deleteData = async (index: number) => {
+    try {
+      let newArr = [...certificates]
+      const exp = { ...newArr[index] }
+      newArr.splice(index, 1)
+      setCertificates(newArr)
+      if (exp._id) {
+        const { data } = await Api().delete(`/user/certificate/${exp._id}`)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className="row">
       <div className="col-12">
-        {data &&
-          data.map((certificate, index) => (
-            <Item certificate={certificate} firstIndex={index === 0} />
+        {certificates &&
+          certificates.map((certificate, index) => (
+            <Item
+              certificate={certificate}
+              firstIndex={index === 0}
+              onDelete={() => deleteData(index)}
+            />
           ))}
+      </div>
+      <div className="col-12">
+        <Card>
+          <CardBody className="d-flex align-items-center justify-content-center">
+            <Button
+              color="primary"
+              size="lg"
+              isLight
+              className="w-100 h-100 py-4"
+              icon="AddCircle"
+              onClick={onAddNew}
+            >
+              Add New
+            </Button>
+          </CardBody>
+        </Card>
       </div>
     </div>
   )
@@ -96,10 +164,16 @@ const Certificate: React.FC<CertificateProps> = ({ data, resumeId }) => {
 type CertificateItemProps = {
   certificate: ICertificate
   firstIndex: boolean
+  onDelete: () => void
 }
 
-const Item: React.FC<CertificateItemProps> = ({ certificate, firstIndex }) => {
+const Item: React.FC<CertificateItemProps> = ({
+  certificate,
+  firstIndex,
+  onDelete,
+}) => {
   const [years, setYears] = useState<SelectType[]>([])
+  const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     let yearList: SelectType[] = []
@@ -122,8 +196,39 @@ const Item: React.FC<CertificateItemProps> = ({ certificate, firstIndex }) => {
   const formik = useFormik({
     initialValues: { ...certificate },
     validationSchema: CertificateSchema,
-    onSubmit: () => {},
+    onSubmit: (values) => {
+      if (values._id) {
+        updateData(values)
+      } else {
+        saveData(values)
+      }
+    },
   })
+
+  useEffect(() => {
+    setSaved(false)
+  }, [formik.values])
+
+  const saveData = async (payload: ICertificate) => {
+    try {
+      const { data } = await Api().post('/user/certificate', payload)
+      setSaved(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const updateData = async (payload: ICertificate) => {
+    try {
+      const { data } = await Api().put(
+        `/user/certificate/${payload._id}`,
+        payload
+      )
+      setSaved(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <Card tag="form" noValidate onSubmit={formik.handleSubmit}>
@@ -195,7 +300,7 @@ const Item: React.FC<CertificateItemProps> = ({ certificate, firstIndex }) => {
                         list={years}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        value={formik.values.startYear.toString()}
+                        value={formik.values.startYear?.toString()}
                         isValid={formik.isValid}
                         isTouched={formik.touched.startYear}
                         invalidFeedback={formik.errors.startYear}
@@ -208,45 +313,50 @@ const Item: React.FC<CertificateItemProps> = ({ certificate, firstIndex }) => {
               <div className="col-6">
                 <Label className="fw-bold">End</Label>
                 <div className="row">
-                  <div className="col-md-6">
-                    <FormGroup id="endMonth" label="Month" isFloating>
-                      <Select
-                        ariaLabel="endMonth"
-                        placeholder="Month"
-                        list={months}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.endMonth}
-                        isValid={formik.isValid}
-                        isTouched={formik.touched.endMonth}
-                        invalidFeedback={formik.errors.endMonth}
-                        validFeedback="Looks good!"
-                      />
-                    </FormGroup>
-                  </div>
-                  <div className="col-md-6">
-                    <FormGroup id="endYear" label="Year" isFloating>
-                      <Select
-                        ariaLabel="endYear"
-                        placeholder="Year"
-                        list={years}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.endYear?.toString()}
-                        isValid={formik.isValid}
-                        isTouched={formik.touched.endYear}
-                        invalidFeedback={formik.errors.endYear}
-                        validFeedback="Looks good!"
-                      />
-                    </FormGroup>
-                  </div>
+                  {!formik.values.doesNotExpire ? (
+                    <>
+                      <div className="col-md-6">
+                        <FormGroup id="endMonth" label="Month" isFloating>
+                          <Select
+                            ariaLabel="endMonth"
+                            placeholder="Month"
+                            list={months}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.endMonth}
+                            isValid={formik.isValid}
+                            isTouched={formik.touched.endMonth}
+                            invalidFeedback={formik.errors.endMonth}
+                            validFeedback="Looks good!"
+                          />
+                        </FormGroup>
+                      </div>
+                      <div className="col-md-6">
+                        <FormGroup id="endYear" label="Year" isFloating>
+                          <Select
+                            ariaLabel="endYear"
+                            placeholder="Year"
+                            list={years}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.endYear?.toString()}
+                            isValid={formik.isValid}
+                            isTouched={formik.touched.endYear}
+                            invalidFeedback={formik.errors.endYear}
+                            validFeedback="Looks good!"
+                          />
+                        </FormGroup>
+                      </div>
+                    </>
+                  ) : null}
                   <div className="col-12 mt-3">
                     <Checks
+                      name="doesNotExpire"
                       type="checkbox"
-                      id="doesNotExpire"
+                      id="doesNotExpirel"
                       label="Does not Expire"
-                      // onChange={exampleInline.handleChange}
-                      // checked={exampleInline.values.exampleInlineOne}
+                      onChange={formik.handleChange}
+                      checked={formik.values.doesNotExpire}
                       isInline
                     />
                   </div>
@@ -258,20 +368,26 @@ const Item: React.FC<CertificateItemProps> = ({ certificate, firstIndex }) => {
       </CardBody>
       <CardFooter>
         <CardFooterLeft>
-          <Button color="danger" isLink onClick={formik.resetForm}>
+          <Button color="danger" isLink onClick={onDelete}>
             Delete
           </Button>
         </CardFooterLeft>
         <CardFooterRight>
-          <Button
-            type="submit"
-            icon="Save"
-            color="primary"
-            isOutline
-            isDisable={!formik.isValid && !!formik.submitCount}
-          >
-            Save
-          </Button>
+          {!saved ? (
+            <Button
+              type="submit"
+              icon="Save"
+              color="primary"
+              isOutline
+              isDisable={!formik.isValid && !!formik.submitCount}
+            >
+              Save
+            </Button>
+          ) : (
+            <Button type="submit" icon="Check" color="success">
+              Saved
+            </Button>
+          )}
         </CardFooterRight>
       </CardFooter>
     </Card>
